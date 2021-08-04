@@ -1,10 +1,11 @@
 const publicationCtrl = require('../controllers/publication');
-const router = express.Router();
 const express = require('express');
+const router = express.Router();
+const auth = require('../middleware/auth');
+const multer = require('../middleware/multer-config');
 
-router.post('/createPublication', publicationCtrl.createPublication);
-router.post('/updatePublication', publicationCtrl.updatePublication);
-router.get('/realPublication', publicationCtrl.realPublication);
-router.delete('/deletePublication', publicationCtrl.deletePublication);
+router.post('/createPublication', auth, multer, publicationCtrl.createPublication);
+router.put('/updatePublication', auth, multer, publicationCtrl.updatePublication);
+router.delete('/deletePublication', auth, publicationCtrl.deletePublication);
 
 module.exports = router;

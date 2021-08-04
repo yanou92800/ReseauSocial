@@ -2,10 +2,11 @@
 const userCtrl = require ('../controllers/user');
 const express = require('express');
 const router = express.Router();
+const password = require("../middleware/password"); // importe middleware password
 
-router.post('/signup', userCtrl.signup);
+router.post('/signup', password, userCtrl.signup);
 router.post('/login', userCtrl.login);
-router.put('/update', userCtrl.updateAccount);
-router.get('/deleteAccount', userCtrl.deleteAccount);
+router.put('/updateAccount', userCtrl.updateAccount);
+router.delete('/deleteAccount', userCtrl.deleteAccount);
 
 module.exports = router;

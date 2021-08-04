@@ -12,12 +12,12 @@ const sqlLogin = (email) => {
   return `SELECT * FROM users WHERE email = '${email}'`
 };
 
-const sqlUpdateAccount = (email, username, password) => {
-  return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}' WHERE email= '${email}'`
+const sqlUpdateAccount = (email, username, password, id) => {
+  return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}' WHERE id= '${id}'`
 };
 
-const sqlDeleteAccount = (email) => {
-  return `DELETE FROM users WHERE email = '${email}'`
+const sqlDeleteAccount = (id) => {
+  return `DELETE FROM users WHERE id = '${id}'`
 };
 
 // fonction pour s'inscire
@@ -82,10 +82,15 @@ exports.login = (req, res, next) => {
             }
 
 exports.updateAccount = (req, res, next) => {
-  const updateAccount = sqlUpdateAccount(
-      req.body.email,
+  bcrypt.hash(req.body.password, 10, function(err, hash) {
+    
+    if (err) throw err;
+    
+    const updateAccount = sqlUpdateAccount(
+      cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString(),
       req.body.username,
-      req.body.password
+      hash,
+      req.body.id
   );
   
   console.log(updateAccount);
@@ -97,12 +102,14 @@ exports.updateAccount = (req, res, next) => {
           },
           console.log(updateAccount)
       )
-    }
+      res.status(201).json({ message: 'Modification confirmée' })
+    })
+  };
 
 exports.deleteAccount = (req, res, next) => {
 
   const deleteAccount = sqlDeleteAccount(
-      req.body.email
+      req.body.id
   );
 
   db.query(

@@ -1,24 +1,24 @@
 const db = require('../DBConnect');
 
-const sqlCreatePublication = (title, content, userId) => {
-    return `INSERT INTO publications (title, content, userId) VALUES ("${title}", "${content}", "${userId}")`
+const sqlCreatePublication = (UserId, title, content) => {
+    return `INSERT INTO publications (UserId, title, content) VALUES ("${UserId}", "${title}", "${content}")`
 };
 
 
-const sqlUpdatePublication = (title, content) => {
-    return `UPDATE publications SET picture = "${title}", comment = "${content}" WHERE userId = "${userId}" and publicationId = "${publicationId}"` // tester la sous requete
+const sqlUpdatePublication = (title, content, id) => {
+    return `UPDATE publications SET title = "${title}", content = "${content}" WHERE id = "${id}"` // tester la sous requete
 };
 
-const sqlDeletePublication = (userId, publicationId) => {
-    return `DELETE FROM publications WHERE publicationId = "${publicationId}" and user_id = "${userId}"`
+const sqlDeletePublication = (id) => {
+    return `DELETE FROM publications WHERE id = "${id}"`
 };
 
 exports.createPublication = (req, res, next) => {
 
     const createPublication = sqlCreatePublication(
+        req.body.UserId,
         req.body.title,
-        req.body.content,
-        userId
+        req.body.content
     );
 
         console.log(createPublication),
@@ -39,7 +39,7 @@ exports.updatePublication = (req, res, next) => {
     const updatePublication = sqlUpdatePublication(
         req.body.title,
         req.body.content,
-        req.body.userId,
+        req.body.id
     );
 
         console.log(updatePublication),
@@ -58,8 +58,7 @@ exports.updatePublication = (req, res, next) => {
 exports.deletePublication = (req, res, next) => {
 
     const deletePublication = sqlDeletePublication(
-        req.body.UserId,
-        // recuperer l'id de la publication
+        req.body.id,
     );
 
 console.log(deletePublication)
@@ -71,5 +70,5 @@ console.log(deletePublication)
         }
 
     )
-    res.status(201).json({ message: 'Publication suprimée !' })
+    res.status(201).json({ message: 'Publication supprimée !' })
 }
