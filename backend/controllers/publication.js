@@ -4,7 +4,6 @@ const sqlCreatePublication = (UserId, title, content) => {
     return `INSERT INTO publications (UserId, title, content) VALUES ("${UserId}", "${title}", "${content}")`
 };
 
-
 const sqlUpdatePublication = (title, content, id) => {
     return `UPDATE publications SET title = "${title}", content = "${content}" WHERE id = "${id}"` // tester la sous requete
 };
@@ -30,7 +29,10 @@ exports.createPublication = (req, res, next) => {
             if (error) throw error;
         }
     )
-    res.status(201).json({ message: 'Publication envoyée !' })
+    res.status(201).json({ 
+        message: 'Publication envoyée !',
+        username: req.body.username
+    })
 }
 
 

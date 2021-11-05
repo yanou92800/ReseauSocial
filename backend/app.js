@@ -11,8 +11,10 @@ const apiLimiter = rateLimit({
   max: 100
 });
 
-const userRoutes = require('./routes/user'); // enregistrer route publi et importer
-const publicationRoutes = require('./routes/publication'); // enregistrer route user et importer user
+const userRoutes = require('./routes/user'); 
+const publicationRoutes = require('./routes/publication'); 
+const likeRoutes = require('./routes/like');
+const commentRoutes = require('./routes/comment');
   
 const app = express();
   
@@ -34,8 +36,10 @@ app.use(hpp());
 app.use(helmet());
 
 // appliquer routeur
-app.use('/api/auth', userRoutes);
+app.use('/api', userRoutes);
 app.use('/api/publication', publicationRoutes);
+app.use('/api/comment', commentRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/api/like', likeRoutes);
 
 module.exports = app;

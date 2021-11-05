@@ -12,16 +12,21 @@ const sqlLogin = (email) => {
   return `SELECT * FROM users WHERE email = '${email}'`
 };
 
-const sqlUpdateAccount = (email, username, password, id) => {
+const sqlUpdateProfile = (email, username, password, id) => {
   return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}' WHERE id= '${id}'`
 };
 
-const sqlDeleteAccount = (id) => {
+const sqlDeleteProfile = (id) => {
   return `DELETE FROM users WHERE id = '${id}'`
+};
+
+const sqlGetUserInfos = (id) => {
+  return `SELECT * FROM users WHERE id = '${id}'`
 };
 
 // fonction pour s'inscire
 exports.signup = (req, res, next) => {
+
   bcrypt.hash(req.body.password, 10, function(err, hash) {
 
       if (err) throw err;
@@ -40,7 +45,9 @@ exports.signup = (req, res, next) => {
            if (err) throw err;
         });
 
-      res.status(201).json({ message: 'Enregistrement confirmée' })
+      res.status(201).json({ 
+        message: "Enregistrement confirmé",
+        username: req.body.username })
     });
 };
 
@@ -74,50 +81,81 @@ exports.login = (req, res, next) => {
                     {userToken: result[0].id},
                     process.env.TOKEN,
                     {expiresIn: '24h'},
-                    )
+                    ),
+                photoProfil: 'https://gem.ec-nantes.fr/wp-content/uploads/2019/01/profil-vide.png'
                   });
                 })
                 .catch(error => res.status(500).json({ error }));
               })
             }
 
-exports.updateAccount = (req, res, next) => {
+exports.updateProfile = (req, res, next) => {
   bcrypt.hash(req.body.password, 10, function(err, hash) {
     
     if (err) throw err;
     
-    const updateAccount = sqlUpdateAccount(
+    const updateProfile = sqlUpdateProfile(
       cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString(),
       req.body.username,
       hash,
       req.body.id
   );
   
-  console.log(updateAccount);
+  console.log(updateProfile);
   
   db.query(
-          updateAccount,
+          updateProfile,
           function(error) {
               if (error) throw error;
           },
-          console.log(updateAccount)
+          console.log(updateProfile)
       )
       res.status(201).json({ message: 'Modification confirmée' })
     })
   };
 
-exports.deleteAccount = (req, res, next) => {
+exports.deleteProfile = (req, res, next) => {
 
-  const deleteAccount = sqlDeleteAccount(
-      req.body.id
+  const deleteProfile = sqlDeleteProfile(
+      req.params.id
   );
 
   db.query(
-      deleteAccount,
-          function(error) {
-              if (error) throw error;
-          }
-      )
+    deleteProfile,
+    function(error, result) {
+      if (error) throw error;
+      if (result) {
+        console.log(result)
+        }
+      res.status(200).json({
+        message: 'Compte supprimé',
+      })
+    }
+  )
+};
 
-      res.status(201).json({ message: 'Compte supprimé' })
-}
+exports.getUserInfos = (req, res, next) => {
+  
+  const getUserInfos = sqlGetUserInfos(
+    req.params.id
+  );
+
+  // console.log(getUserInfos)
+  
+  db.query(
+    getUserInfos,
+    function(error, result) {
+      if (error) throw error;
+      if (result) {
+        // console.log(result[0].username)
+        }
+      res.status(200).json({
+        message: 'Acces au profil',
+        infos: {
+          username: result[0].username,
+        }
+      })
+    }
+  )
+};
+
