@@ -24,6 +24,10 @@ const sqlGetUserInfos = (id) => {
   return `SELECT * FROM users WHERE id = '${id}'`
 };
 
+const sqlGetAllUsers = () => {
+  return `SELECT username FROM users`
+};
+
 // fonction pour s'inscire
 exports.signup = (req, res, next) => {
 
@@ -98,7 +102,7 @@ exports.updateProfile = (req, res, next) => {
       cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString(),
       req.body.username,
       hash,
-      req.body.id
+      req.params.id
   );
   
   console.log(updateProfile);
@@ -140,7 +144,7 @@ exports.getUserInfos = (req, res, next) => {
     req.params.id
   );
 
-  // console.log(getUserInfos)
+  console.log(getUserInfos)
   
   db.query(
     getUserInfos,
@@ -154,6 +158,30 @@ exports.getUserInfos = (req, res, next) => {
         infos: {
           username: result[0].username,
         }
+      })
+    }
+  )
+};
+
+exports.getAllUsers = (req, res, next) => {
+  
+  const getAllUsers = sqlGetAllUsers();
+
+  console.log(getAllUsers)
+  
+  db.query(
+    getAllUsers,
+    function(error, result) {
+      if (error) throw error;
+      console.log(error);
+      if (result) {
+        console.log(result)
+        }
+      res.status(200).json({
+        message: 'Acces aux users',
+        infos: {
+          username: result
+      }
       })
     }
   )

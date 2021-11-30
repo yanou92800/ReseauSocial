@@ -1,7 +1,9 @@
 <template>
     <div class="container">
-        <textarea v-model="formData.publication" type="texte"></textarea>
-        <button v-on:click.prevent="creationItem">Publier</button>
+        <form @submit.prevent="onSubmit">
+            <textarea v-model="v$.form.formData.publication.$model" type="texte"></textarea>
+            <button :disabled="v$.form.formData.publication.$invalid" v-on:click.prevent="createPublication">Publier</button>
+        </form>
         <div class="container-card">
             <div v-bind:key="index" v-for="(publication, index) in tableauPublications" class="card">
                 <item v-bind:id="index" v-bind:publication="publication" v-bind:suppression="suppression"></item>
@@ -12,33 +14,53 @@
 
 <script>
 
-import Item from './Item.vue'
+import Item from '../Item'
+import axios from "axios";
+import useVuelidate from '@vuelidate/core'
+import { required, minLength } from '@vuelidate/validators'
 
 export default {
-    name: "Publications",
+    name: "allPublications",
+    setup () {
+        return { v$: useVuelidate() }
+    },
     data(){
         return {
-            formData: {
+            form: {
+                formData: {
                     publication: '',
-                },
-            tableauPublications: [
-                "1 Salut ca va?eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                "2 Salut ca va?eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                "3 Salut ca va?eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                "4 Salut ca va?eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                "5 Salut ca va?eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                "6 Salut ca va?eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                "7 Salut ca va?eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-            ],
+                }
+            },
+            tableauPublications: [],
+        }
+    },
+    async created() {
+		await axios
+			.get("http://localhost:5000/api/publication/allPublications")
+			.then((response) => {
+				this.tableauPublications = response.data;
+			})
+			
+			.catch((error) => {
+				console.log(error);
+			});
+	},
+    validations () {
+        return {
+            form: { 
+                formData: {
+                    publication: { required, minLength: minLength(4) },
+                }
+            },
         }
     },
     components: {
             'item': Item,
     },
     methods: {
-        creationItem: function() {
-            this.tableauPublications.push(this.formData.publication)
-            this.formData.publication= ''
+        createPublication() {
+            this.tableauPublications.push(this.form.formData.publication)
+            this.form.formData.publication = '';
         },
         suppression: function(e) {
                 // console.log(e.target.parentNode.id);

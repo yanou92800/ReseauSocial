@@ -4,6 +4,7 @@ const xss = require('xss-clean'); // Désinfecte le HTML non fiable (pour empêc
 const hpp = require('hpp'); // Protège contre les attaques de pollution des paramètres HTTP
 const rateLimit = require('express-rate-limit'); //limite les requêtes par IP (force brut, bot)
 const helmet = require('helmet'); //définit divers en-têtes HTTP sécurisées (9 fonctions)
+const cors = require('cors');
 
 //100 requêtes toutes les 15min par IP
 const apiLimiter = rateLimit({
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+app.use(cors());
 app.use('/api', apiLimiter); // limiteur de requêtes s'applique seulement aux requêtes commençant par API (=ne concerne pas les express.static)
 app.use(xss());
 app.use(hpp());

@@ -6,13 +6,13 @@
       <button v-on:click="logout()" class="button">Déconnexion</button>
     </div>
   </div>
-  <publications></publications>
+  <allPublications></allPublications>
 </template>
 
 <script>
 
 import { mapState } from 'vuex'
-import Publications from '../Publications.vue'
+import allPublications from '../Publication/allPublications'
 
 export default {
   name: 'Profile',
@@ -37,7 +37,7 @@ export default {
     }
   },
   components: {
-            'publications': Publications,
+            'allPublications': allPublications,
         },
 }
 
