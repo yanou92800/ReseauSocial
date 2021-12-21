@@ -86,7 +86,7 @@ exports.login = (req, res, next) => {
                     process.env.TOKEN,
                     {expiresIn: '24h'},
                     ),
-                photoProfil: 'https://gem.ec-nantes.fr/wp-content/uploads/2019/01/profil-vide.png'
+                photoProfil: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg'
                   });
                 })
                 .catch(error => res.status(500).json({ error }));

@@ -1,12 +1,13 @@
 <template>
     <div class="container">
         <form @submit.prevent="onSubmit">
-            <textarea v-model="v$.form.formData.publication.$model" type="texte"></textarea>
-            <button :disabled="v$.form.formData.publication.$invalid" v-on:click.prevent="createPublication">Publier</button>
+            <textarea v-model="v$.textareaCreatePublication.$model" type="texte"></textarea>
+            <button :disabled="v$.textareaCreatePublication.$invalid" v-on:click.prevent="createPublication">Publier</button>
         </form>
         <div class="container-card">
             <div v-bind:key="index" v-for="(publication, index) in tableauPublications" class="card">
-                <item v-bind:id="index" v-bind:publication="publication" v-bind:suppression="suppression"></item>
+                <strong>Posté par {{ publication.author }} le {{ publication.createdAt }} </strong>
+                <item v-bind:id="index" v-bind:publication="publication.content" v-bind:suppression="() => suppression(publication)"></item>
             </div>
         </div>
     </div>
@@ -18,6 +19,8 @@ import Item from '../Item'
 import axios from "axios";
 import useVuelidate from '@vuelidate/core'
 import { required, minLength } from '@vuelidate/validators'
+import $store from "@/store/index";
+import dayjs from 'dayjs';
 
 export default {
     name: "allPublications",
@@ -26,11 +29,7 @@ export default {
     },
     data(){
         return {
-            form: {
-                formData: {
-                    publication: '',
-                }
-            },
+            textareaCreatePublication: '',
             tableauPublications: [],
         }
     },
@@ -38,7 +37,11 @@ export default {
 		await axios
 			.get("http://localhost:5000/api/publication/allPublications")
 			.then((response) => {
-				this.tableauPublications = response.data;
+                console.log(response)
+				this.tableauPublications = response.data.map((publication) => {
+                    publication.createdAt = dayjs(publication.createdAt).format("DD-MMM-YYYY à HH:mm");
+                    return publication
+                });
 			})
 			
 			.catch((error) => {
@@ -47,24 +50,48 @@ export default {
 	},
     validations () {
         return {
-            form: { 
-                formData: {
-                    publication: { required, minLength: minLength(4) },
-                }
-            },
-        }
-    },
+            textareaCreatePublication: {required, minLength: minLength(4)},
+            }
+        },
     components: {
             'item': Item,
     },
     methods: {
         createPublication() {
-            this.tableauPublications.push(this.form.formData.publication)
-            this.form.formData.publication = '';
+            console.log($store.state)
+            axios({
+                method: "POST",
+                url: "http://localhost:5000/api/publication/createPublication",
+                headers: { 
+                    "Authorization": `Bearer ${$store.state.user.token}`
+                },
+                data: {
+                    author: $store.state.user.username,
+                    UserId: $store.state.user.userId,
+                    content: this.textareaCreatePublication
+                }
+            })
+            .then((response) => {
+                this.tableauPublications.splice(0, 0, {author: $store.state.user.username, content: this.textareaCreatePublication, createdAt: new Date().getDay()})
+                this.textareaCreatePublication = '';
+                console.log("createPubli", response)
+            })
         },
-        suppression: function(e) {
-                // console.log(e.target.parentNode.id);
-                this.tableauPublications.splice(e.target.parentNode.id, 1)//enlève 1 élément du tableau
+        suppression(publication) {
+            axios({
+                method: "DELETE",
+                url: `http://localhost:5000/api/publication/deletePublication/${publication.id}`,
+                headers: { 
+                    "Authorization": `Bearer ${$store.state.user.token}`
+                },
+                data: {
+                    UserId: publication.UserId
+                }
+            })
+            .then(() => {
+                const index = this.tableauPublications.findIndex((value) => value.id === publication.id)
+                this.tableauPublications.splice(index, 1) //enlève 1 élément du tableau
+            })
         },
     },
 }
@@ -91,7 +118,7 @@ textarea {
 
 .container-card {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
 }
 
 .card {

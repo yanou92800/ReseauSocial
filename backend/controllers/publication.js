@@ -1,7 +1,7 @@
 const db = require('../DBConnect');
 
-const sqlCreatePublication = (UserId, content) => {
-    return `INSERT INTO publications (UserId, content) VALUES ("${UserId}", "${content}")`
+const sqlCreatePublication = (author, UserId, content) => {
+    return `INSERT INTO publications (author, UserId, content) VALUES ("${author}", "${UserId}", "${content}")`
 };
 
 const sqlUpdatePublication = (content, UserId, id) => {
@@ -9,7 +9,7 @@ const sqlUpdatePublication = (content, UserId, id) => {
 };
 
 const sqlGetPublication = (id) => {
-    return `SELECT * FROM publications WHERE id = '${id}' ORDER BY createdAt DESC`
+    return `SELECT * FROM publications WHERE id = '${id}'`
   };
 
 const sqlDeletePublication = (id) => {
@@ -17,17 +17,18 @@ const sqlDeletePublication = (id) => {
 };
 
 const sqlGetAllPublications = () => {
-    return `SELECT content FROM publications`
+    return `SELECT author, content, id, UserId, createdAt FROM publications ORDER BY createdAt DESC`
   };
 
 exports.createPublication = (req, res, next) => {
 
     const createPublication = sqlCreatePublication(
+        req.body.author,
         req.body.UserId,
         req.body.content
     );
     
-    console.log(createPublication),
+    // console.log(createPublication),
 
 
     db.query(
@@ -35,7 +36,7 @@ exports.createPublication = (req, res, next) => {
         function(error, result) {
             if (error) throw error;
             if (result) {
-                console.log(result)
+                // console.log(result)
             }
             res.status(201).json({ 
                     message: 'Publication envoyée !',
@@ -51,7 +52,7 @@ exports.getPublication = (req, res, next) => {
       req.params.id
     );
   
-    console.log(getPublication)
+    // console.log(getPublication)
     
     db.query(
       getPublication,
@@ -79,7 +80,7 @@ exports.updatePublication = (req, res, next) => {
         req.params.id
     );
 
-        console.log(updatePublication),
+        // console.log(updatePublication),
 
 
     db.query(
@@ -94,11 +95,13 @@ exports.updatePublication = (req, res, next) => {
 
 exports.deletePublication = (req, res, next) => {
 
-    const deletePublication = sqlDeletePublication(
-        req.body.id,
-    );
+    // console.log("ID", req.params)
 
-console.log(deletePublication)
+    const deletePublication = sqlDeletePublication(
+      req.params.id,
+    );
+    
+    // console.log(deletePublication)
 
     db.query(
         deletePublication,
@@ -114,7 +117,7 @@ exports.getAllPublications = (req, res, next) => {
   
     const getAllPublications = sqlGetAllPublications();
   
-    console.log(getAllPublications)
+    //console.log(getAllPublications)
     
     db.query(
       getAllPublications,
@@ -122,11 +125,9 @@ exports.getAllPublications = (req, res, next) => {
         if (error) throw error;
         console.log(error);
         if (result) {
-          console.log(result)
+          // console.log(result)
           }
-        res.status(200).json({
-          result
-        })
+        res.status(200).json(result)
       }
     )
   };
