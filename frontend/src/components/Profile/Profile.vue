@@ -2,7 +2,7 @@
   <div class="header-top">
     <div class="navbar">
       <p>Bienvenue {{ user.username }}</p>
-      <img v-bind:src="user.photoProfil"/>
+      <img v-bind:src="user.avatar"/>
       <button v-on:click="logout()" class="button">Déconnexion</button>
     </div>
   </div>
@@ -10,13 +10,11 @@
 </template>
 
 <script>
-
 import { mapState } from 'vuex'
 import allPublications from '../Publication/allPublications'
-
 export default {
   name: 'Profile',
-  mounted: function () {
+  mounted() {
     console.log(this.$store.state.user);
     if (this.$store.state.user.userId == -1) {
       this.$router.push('/');
@@ -31,7 +29,7 @@ export default {
     })
   },
   methods: {
-    logout: function () {
+    logout() {
       this.$store.commit('logout');
       this.$router.push('/');
     }
@@ -40,11 +38,9 @@ export default {
             'allPublications': allPublications,
         },
 }
-
 </script>
 
 <style scoped>
-
 img {
   width: 40px;
   height: 40px;
@@ -52,12 +48,10 @@ img {
   margin-left: 5px;
   margin-right: 5px;
 }
-
 p {
   margin-left: 5px;
   margin-right: 5px;
 }
-
 .button {
   width: 150px;
   height: 30px;
@@ -66,7 +60,6 @@ p {
   margin-right: 5px;
   padding: 4px;
 }
-
 .header-top {
   height: 55px;
   background: #1a2a6c;  /* fallback for old browsers */
@@ -84,10 +77,8 @@ p {
   left: 0;
   z-index: 1030;
 }
-
 .navbar {
   display: flex;
   justify-content: right;
 }
-
 </style>

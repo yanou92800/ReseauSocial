@@ -1,15 +1,15 @@
 const db = require('../DBConnect');
 
-const sqlCreatePublication = (author, UserId, content) => {
-    return `INSERT INTO publications (author, UserId, content) VALUES ("${author}", "${UserId}", "${content}")`
+const sqlCreatePublication = (userId, content) => {
+    return `INSERT INTO publications (userId, content) VALUES ("${userId}", "${content}")`
 };
 
-const sqlUpdatePublication = (content, UserId, id) => {
-    return `UPDATE publications SET content = "${content}", UserId= "${UserId}" WHERE id = "${id}"` // tester la sous requete
+const sqlUpdatePublication = (content, userId, id, attachment) => {
+    return `UPDATE publications SET content = "${content}", userId= "${userId}", attachment="${attachment} WHERE id = "${id}"` // tester la sous requete
 };
 
-const sqlGetPublication = (id) => {
-    return `SELECT * FROM publications WHERE id = '${id}'`
+const sqlGetOnePublication = (id) => {
+    return `SELECT publications.*, users.username FROM publications JOIN users ON publications.userId = users.id  WHERE publications.id = ${id}`
   };
 
 const sqlDeletePublication = (id) => {
@@ -17,14 +17,13 @@ const sqlDeletePublication = (id) => {
 };
 
 const sqlGetAllPublications = () => {
-    return `SELECT author, content, id, UserId, createdAt FROM publications ORDER BY createdAt DESC`
+    return `SELECT publications.*, users.username, users.avatar FROM publications JOIN users ON publications.userId = users.id ORDER BY createdAt DESC`
   };
 
 exports.createPublication = (req, res, next) => {
 
     const createPublication = sqlCreatePublication(
-        req.body.author,
-        req.body.UserId,
+        req.body.userId,
         req.body.content
     );
     
@@ -38,36 +37,29 @@ exports.createPublication = (req, res, next) => {
             if (result) {
                 // console.log(result)
             }
-            res.status(201).json({ 
-                    message: 'Publication envoyée !',
-            })
+            res.status(201).json(result)
         }
-    )
-   
-}
+    ) 
+};
 
-exports.getPublication = (req, res, next) => {
+exports.getOnePublication = (req, res, next) => {
+
+    // console.log(getOnePublication)
   
-    const getPublication = sqlGetPublication(
+    const getOnePublication = sqlGetOnePublication(
       req.params.id
     );
   
-    // console.log(getPublication)
+    console.log("getPubli", getOnePublication)
     
     db.query(
-      getPublication,
+      getOnePublication,
       function(error, result) {
         if (error) throw error;
         if (result) {
           // console.log(result[0].username)
           }
-        res.status(200).json({
-          message: 'Acces à la publication',
-          infos: {
-            id: result[0].id,
-            content: result[0].content
-          }
-        })
+        res.status(200).json(result)
       }
     )
   };
@@ -76,8 +68,9 @@ exports.updatePublication = (req, res, next) => {
 
     const updatePublication = sqlUpdatePublication(
         req.body.content,
-        req.body.UserId,
-        req.params.id
+        req.body.userId,
+        req.params.id,
+        req.body.attachment
     );
 
         // console.log(updatePublication),
@@ -125,7 +118,7 @@ exports.getAllPublications = (req, res, next) => {
         if (error) throw error;
         console.log(error);
         if (result) {
-          // console.log(result)
+          console.log(result)
           }
         res.status(200).json(result)
       }

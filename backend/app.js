@@ -39,9 +39,9 @@ app.use(helmet());
 
 // appliquer routeur
 app.use('/api', userRoutes);
-app.use('/api/publication', publicationRoutes);
-app.use('/api/comment', commentRoutes);
+app.use('/api', publicationRoutes);
+app.use('/api', commentRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use('/api/like', likeRoutes);
+app.use('/api', likeRoutes);
 
 module.exports = app;

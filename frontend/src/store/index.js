@@ -32,22 +32,22 @@ const store = createStore({
     userInfos: {
       username:'',
       email: '',
-      photoProfil: '',
+      avatar: '',
     },
   },
   mutations: {
-    setStatus: function (state, status) {
+    setStatus(state, status) {
       state.status = status;
     },
-    logUser: function (state, user) {
+    logUser(state, user) {
       instance.defaults.headers.common['Authorization'] = user.token;
       localStorage.setItem('user', JSON.stringify(user));
       state.user = user;
     },
-    userInfos: function (state, userInfos) {
+    userInfos(state, userInfos) {
       state.userInfos = userInfos;
     },
-    logout: function (state) {
+    logout(state) {
       state.user = {
         userId: -1,
         token: '',

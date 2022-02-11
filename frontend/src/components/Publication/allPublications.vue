@@ -6,7 +6,7 @@
         </form>
         <div class="container-card">
             <div v-bind:key="index" v-for="(publication, index) in tableauPublications" class="card">
-                <strong>Posté par {{ publication.author }} le {{ publication.createdAt }} </strong>
+                <strong>Posté par {{ publication.username }} le {{ publication.createdAt }} </strong>
                 <item v-bind:id="index" v-bind:publication="publication.content" v-bind:suppression="() => suppression(publication)"></item>
             </div>
         </div>
@@ -14,17 +14,15 @@
 </template>
 
 <script>
-
 import Item from '../Item'
 import axios from "axios";
 import useVuelidate from '@vuelidate/core'
 import { required, minLength } from '@vuelidate/validators'
 import $store from "@/store/index";
 import dayjs from 'dayjs';
-
 export default {
     name: "allPublications",
-    setup () {
+    setup() {
         return { v$: useVuelidate() }
     },
     data(){
@@ -34,8 +32,13 @@ export default {
         }
     },
     async created() {
-		await axios
-			.get("http://localhost:5000/api/publication/allPublications")
+		await axios({
+            method: "GET",
+            url: "http://localhost:5000/api/allPublications",
+            headers: { 
+                    "Authorization": `Bearer ${$store.state.user.token}`
+            }
+        })
 			.then((response) => {
                 console.log(response)
 				this.tableauPublications = response.data.map((publication) => {
@@ -61,18 +64,18 @@ export default {
             console.log($store.state)
             axios({
                 method: "POST",
-                url: "http://localhost:5000/api/publication/createPublication",
+                url: "http://localhost:5000/api/createPublication",
                 headers: { 
                     "Authorization": `Bearer ${$store.state.user.token}`
                 },
                 data: {
-                    author: $store.state.user.username,
-                    UserId: $store.state.user.userId,
+                    username: $store.state.user.username,
+                    userId: $store.state.user.userId,
                     content: this.textareaCreatePublication
                 }
             })
             .then((response) => {
-                this.tableauPublications.splice(0, 0, {author: $store.state.user.username, content: this.textareaCreatePublication, createdAt: new Date().getDay()})
+                this.tableauPublications.splice(0, 0, {username: $store.state.user.username, content: this.textareaCreatePublication, createdAt: new Date().getDay()})
                 this.textareaCreatePublication = '';
                 console.log("createPubli", response)
             })
@@ -80,12 +83,12 @@ export default {
         suppression(publication) {
             axios({
                 method: "DELETE",
-                url: `http://localhost:5000/api/publication/deletePublication/${publication.id}`,
+                url: `http://localhost:5000/api/deletePublication/${publication.id}`,
                 headers: { 
                     "Authorization": `Bearer ${$store.state.user.token}`
                 },
                 data: {
-                    UserId: publication.UserId
+                    userId: publication.userId
                 }
             })
             .then(() => {
@@ -95,16 +98,13 @@ export default {
         },
     },
 }
-
 </script>
 
 <style scoped>
-
 .container {
     margin-top: 50px;
     width: 500px;
 }
-
 textarea {
     display: block;
     width: 100%;
@@ -115,12 +115,10 @@ textarea {
     line-height: 1.5;
     color: #212529;
 }
-
 .container-card {
     display: flex;
     flex-direction: column;
 }
-
 .card {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -132,5 +130,4 @@ textarea {
     flex-direction: column;
     word-wrap: break-word;
 }
-
 </style>

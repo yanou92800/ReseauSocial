@@ -86,7 +86,7 @@ exports.login = (req, res, next) => {
                     process.env.TOKEN,
                     {expiresIn: '24h'},
                     ),
-                photoProfil: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg'
+                avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg'
                   });
                 })
                 .catch(error => res.status(500).json({ error }));
@@ -157,6 +157,9 @@ exports.getUserInfos = (req, res, next) => {
         message: 'Acces au profil',
         infos: {
           username: result[0].username,
+          avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg',
+          email: result[0].email,
+          password: result[0].password
         }
       })
     }

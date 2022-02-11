@@ -38,7 +38,7 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'Login',
-  data: function () {
+  data() {
     return {
       mode: 'login',
       email: '',
@@ -46,14 +46,14 @@ export default {
       password: '',
     }
   },
-  mounted: function () {
+  mounted() {
     if (this.$store.state.user.userId != -1) {
       this.$router.push('/profile');
       return ;
     }
   },
   computed: {
-    validatedFields: function () {
+    validatedFields() {
       if (this.mode == 'signup') {
         if (this.email != "" && this.username != "" && this.password != "") {
           return true;
@@ -71,13 +71,13 @@ export default {
     ...mapState(['status'])
   },
   methods: {
-    switchToSignup: function () {
+    switchToSignup() {
       this.mode = 'signup';
     },
-    switchToLogin: function () {
+    switchToLogin() {
       this.mode = 'login';
     },
-    login: function () {
+    login() {
       const self = this;
       this.$store.dispatch('login', {
         email: this.email,
@@ -88,7 +88,7 @@ export default {
         console.log(error); 
       })
     },
-    signup: function () {
+    signup() {
       const self = this;
       this.$store.dispatch('signup', {
         email: this.email,
