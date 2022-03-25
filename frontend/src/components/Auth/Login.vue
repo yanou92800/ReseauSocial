@@ -17,7 +17,7 @@
       Adresse mail et/ou mot de passe invalide
     </div>
     <div class="form-row" v-if="mode == 'signup' && status == 'error_signup'">
-      Adresse mail déjà utilisée
+      Assurez vous d'utiliser un mail/username valide et pas déjà utilisé et que votre mot de passe soit bon 
     </div>
     <div class="form-row">
       <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" v-if="mode == 'login'">
@@ -48,7 +48,7 @@ export default {
   },
   mounted() {
     if (this.$store.state.user.userId != -1) {
-      this.$router.push('/profile');
+      this.$router.push('/allPublications');
       return ;
     }
   },
@@ -83,7 +83,7 @@ export default {
         email: this.email,
         password: this.password,
       }).then(function () {
-        self.$router.push('/profile');
+        self.$router.push('/allPublications');
       }, function (error) {
         console.log(error); 
       })

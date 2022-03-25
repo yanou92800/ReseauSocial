@@ -30,10 +30,10 @@ exports.addLike = (req, res) => {
 exports.deleteLike = (req, res, next) => {
 
     const deleteLike = sqlDeleteLike(
-        req.body.id,
+        req.params.id,
     );
 
-console.log(deleteLike)
+    //console.log(deleteLike)
 
     db.query(
         deleteLike,
@@ -50,7 +50,7 @@ exports.getAllLikes = (req, res, next) => {
         req.params.id
     );
   
-    console.log(getAllLikes)
+    //console.log(getAllLikes)
     
     db.query(
       getAllLikes,
@@ -58,7 +58,7 @@ exports.getAllLikes = (req, res, next) => {
         if (error) throw error;
         console.log(error);
         if (result) {
-          console.log(result)
+          //console.log(result)
           }
         res.status(200).json(result)
       }

@@ -26,7 +26,7 @@ exports.body = (req, res, next) => { // exportation identification utilisateur c
     const token = req.headers.authorization.split(' ')[1]; // extraction du token du header avec fonction split pour récupérer tout après l'espace dans le header
     const decodedToken = jwt.verify(token, `${process.env.TOKEN}`); // verify pour décoder le token
     const userId = parseInt(decodedToken.userToken); // extraction ID utilisateur du token  
-    console.log("TOKEN", userId, req.body.userId);    
+    //console.log("TOKEN", userId, req.body.userId);    
     if (req.body.userId && parseInt(req.body.userId) !== userId) { // comparaison ID utilisateur à celui du token
       throw 'Invalid user ID';
     } else {

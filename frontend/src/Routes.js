@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Login from "./components/Auth/Login.vue";
-import Profile from "./components/Profile/Profile.vue";
+import allPublications from "./components/Publication/allPublications.vue";
+import onePublication from "./components/Publication/onePublication.vue"
 
 const routes = [
   { 
@@ -9,9 +10,15 @@ const routes = [
     component: Login,
   },
   { 
-    name: 'profile',
-    path: '/profile', 
-    component: Profile, 
+    name: 'allPublications',
+    path: '/allPublications', 
+    component: allPublications, 
+    props:true 
+  },
+  { 
+    name: 'onePublication/:id',
+    path: '/onePublication', 
+    component: onePublication, 
     props:true 
   },
 ]

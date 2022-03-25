@@ -18,7 +18,7 @@
 						ref="file"
 						name="file"
 						id="file"
-						class="inputfile"
+						class="attachment"
 						@change="selectFile"
 					/>
 					<label for="file"
@@ -61,7 +61,6 @@ export default {
 			],
 		};
 	},
-
 	methods: {
 		selectFile() {
 			this.file = this.$refs.file.files[0];
@@ -70,29 +69,27 @@ export default {
 		createPublication() {
 			console.log($store.state)
 			const fd = new FormData();
+			fd.append("userId", $store.state.userId);
 			fd.append("content", this.content);
-			// fd.append("inputFile", this.file);
+			fd.append("file", this.file);
 
 			if (this.$refs.form.validate()) {
 				axios
 					.post(
-						"http://localhost:5000/api/createPublication",
-						{ content: this.content,
-						userId: $store.state.userId 
-						},
+						"http://localhost:5000/api/createPublication", fd,
 						{
 							headers: {
 								Authorization: `Bearer ${$store.state.token}`,
+								"Content-Type": 'multipart/form-data'
 								},
 						}
 					)
 					.then(() => {
+						this.$emit('getAllPublications');
 						this.$store.dispatch("setSnackbar", {
 							text: "Votre publication est postée",
 						});
-						this.$router.push({
-							name: "allPublications",
-						});
+						this.content = '';
 					})
 					.catch(() => {
 						this.$store.dispatch("setSnackbar", {
@@ -107,20 +104,20 @@ export default {
 </script>
 
 <style scoped>
-.inputfile {
+.attachment {
 	opacity: 0;
 	overflow: hidden;
 	position: absolute;
 	z-index: -1;
 }
-.inputfile + label {
+.attachment + label {
 	font-weight: 500;
 	display: inline-block;
 	cursor: pointer;
 }
 
-.inputfile:focus + label,
-.inputfile + label:hover {
+.attachment:focus + label,
+.attachment + label:hover {
 	background-color: #effbff;
 }
 </style>

@@ -77,7 +77,7 @@ const store = createStore({
         commit;
         instance.post('/signup', userInfos)
         .then(function (response) {
-          commit('setStatus', 'created');
+          commit('setStatus', 'getAllPublications');
           resolve(response);
         })
         .catch(function (error) {

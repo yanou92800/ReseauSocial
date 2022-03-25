@@ -41,7 +41,7 @@ exports.signup = (req, res, next) => {
           hash,
       );
 
-      console.log(signup)
+      //console.log(signup)
 
        db.query(
          signup, 
@@ -57,41 +57,59 @@ exports.signup = (req, res, next) => {
 
 //se connecter
 exports.login = (req, res, next) => {
-
-  const login = sqlLogin (
-      cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString()
+  
+  const checkEmail = sqlLogin (
+    cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString()
   );
   
-  console.log(login)
-  
   db.query(
-      login,
-      req.body.email,
-      (err, result) => {
-          if (err) throw err;
-          if (!req.body.password) {
-              return res.status(401).json({ message: 'Veuillez entrer un mot de passe.' })
-          }
-          bcrypt.compare(req.body.password, result[0].password)
-          .then(valid => {
-              if (!valid) {
-                  return res.status(401).json({ message: 'Mot de passe incorrect.' })
-              };
-              res.status(200).json({
-                userId: result[0].id,
-                username: result[0].username,
-                email: result[0].email,
-                token: jwt.sign(
-                    {userToken: result[0].id},
-                    process.env.TOKEN,
-                    {expiresIn: '24h'},
-                    ),
-                avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg'
-                  });
+    checkEmail,
+    (err, result) => {
+        if (err) res.status(500).json({ error: "erreur serveur" });
+        if (!result) {
+            return res.status(401).json({ message: "Utilisateur non trouvé." });
+        }
+        
+        const login = sqlLogin (
+          cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString()
+        );
+        
+        //console.log(login)
+  
+        db.query(
+            login,
+            req.body.email,
+            (err, result) => {
+                if (err) throw err;
+                if (!req.body.password) {
+                    return res.status(401).json({ message: 'Veuillez entrer un mot de passe.' })
+                }
+                if (result) {
+                  //console.log(result[0].password)
+                }
+                bcrypt.compare(req.body.password, result[0].password)
+                .then(valid => {
+                    if (!valid) {
+                        return res.status(401).json({ message: 'Mot de passe incorrect.' })
+                    };
+                    res.status(200).json({
+                      userId: result[0].id,
+                      username: result[0].username,
+                      email: result[0].email,
+                      token: jwt.sign(
+                          {userToken: result[0].id},
+                          process.env.TOKEN,
+                          {expiresIn: '24h'},
+                          ),
+                      avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg'
+                    });
                 })
                 .catch(error => res.status(500).json({ error }));
-              })
             }
+        )
+    }
+  )
+}
 
 exports.updateProfile = (req, res, next) => {
   bcrypt.hash(req.body.password, 10, function(err, hash) {
@@ -105,14 +123,14 @@ exports.updateProfile = (req, res, next) => {
       req.params.id
   );
   
-  console.log(updateProfile);
+  //console.log(updateProfile);
   
   db.query(
           updateProfile,
           function(error) {
               if (error) throw error;
           },
-          console.log(updateProfile)
+          //console.log(updateProfile)
       )
       res.status(201).json({ message: 'Modification confirmée' })
     })
@@ -129,7 +147,7 @@ exports.deleteProfile = (req, res, next) => {
     function(error, result) {
       if (error) throw error;
       if (result) {
-        console.log(result)
+        //console.log(result)
         }
       res.status(200).json({
         message: 'Compte supprimé',
@@ -144,7 +162,7 @@ exports.getUserInfos = (req, res, next) => {
     req.params.id
   );
 
-  console.log(getUserInfos)
+  //console.log(getUserInfos)
   
   db.query(
     getUserInfos,
@@ -170,7 +188,7 @@ exports.getAllUsers = (req, res, next) => {
   
   const getAllUsers = sqlGetAllUsers();
 
-  console.log(getAllUsers)
+  //console.log(getAllUsers)
   
   db.query(
     getAllUsers,
@@ -178,7 +196,7 @@ exports.getAllUsers = (req, res, next) => {
       if (error) throw error;
       console.log(error);
       if (result) {
-        console.log(result)
+        //console.log(result)
         }
       res.status(200).json({
         message: 'Acces aux users',
@@ -189,4 +207,3 @@ exports.getAllUsers = (req, res, next) => {
     }
   )
 };
-

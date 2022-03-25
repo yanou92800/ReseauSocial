@@ -16,8 +16,8 @@ const sqlDeleteComment = (id) => {
     return `DELETE FROM comments WHERE id = "${id}"`
 };
 
-const sqlGetAllComments = () => {
-  return `SELECT comments.*, users.username, users.avatar FROM comments JOIN users ON comments.userId = users.id ORDER BY createdAt DESC`
+const sqlGetAllComments = (id) => {
+  return `SELECT comments.*, users.username, users.avatar FROM comments JOIN users ON comments.userId = users.id WHERE publicationId = ${id} ORDER BY createdAt DESC`
 };
 
 exports.createComment = (req, res, next) => {
@@ -28,7 +28,7 @@ exports.createComment = (req, res, next) => {
         req.body.content
     );
 
-        console.log(createComment),
+        //console.log(createComment),
 
 
     db.query(
@@ -75,7 +75,7 @@ exports.updateComment = (req, res, next) => {
         req.body.id
     );
 
-        console.log(updateComment),
+        //console.log(updateComment),
 
 
     db.query(
@@ -94,7 +94,7 @@ exports.deleteComment = (req, res, next) => {
         req.body.id,
     );
 
-console.log(deleteComment)
+    //console.log(deleteComment)
 
     db.query(
         deleteComment,
@@ -108,26 +108,9 @@ console.log(deleteComment)
 
 exports.getAllComments = (req, res, next) => {
   
-    const getAllComments = sqlGetAllComments();
-  
-    console.log(getAllComments)
-    
-    db.query(
-      getAllComments,
-      function(error, result) {
-        if (error) throw error;
-        console.log(error);
-        if (result) {
-          console.log(result)
-          }
-        res.status(200).json(result)
-      }
-    )
-  };
-
-  exports.getAllComments = (req, res, next) => {
-  
-    const getAllComments = sqlGetAllComments();
+    const getAllComments = sqlGetAllComments(
+      req.params.id
+    );
   
     //console.log(getAllComments)
     
@@ -137,7 +120,7 @@ exports.getAllComments = (req, res, next) => {
         if (error) throw error;
         console.log(error);
         if (result) {
-          console.log(result)
+          //console.log(result)
           }
         res.status(200).json(result)
       }

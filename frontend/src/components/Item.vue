@@ -1,7 +1,8 @@
 <template>
     <div class="card-text">
         <p>{{ publication }}</p>
-        <button v-on:click="suppression" class="item">X</button>
+        <p>{{ comment }}</p>
+        <button v-on:click="deletePublication" class="item">X</button>
     </div>
 </template>
 
@@ -10,7 +11,7 @@
 
 export default {
     name: 'Item',
-    props: ['publication', 'suppression'],
+    props: ['publication', 'comment', 'deletePublication'],
 }
 
 </script>

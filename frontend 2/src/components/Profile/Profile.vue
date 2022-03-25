@@ -23,7 +23,7 @@
                 ref="file"
                 name="file"
                 id="file"
-                class="inputfile"
+                class="attachment"
                 @change="selectFile"
               />
               <label for="file"
@@ -115,7 +115,7 @@ export default {
     },
     updateProfile() {
       const fd = new FormData();
-      fd.append("inputFile", this.file);
+      fd.append("attachment", this.file);
       axios
         .put(
           "http://localhost:5000/api/updateProfil/" + this.$route.params.id,
@@ -166,20 +166,20 @@ export default {
 </script>
 
 <style scoped>
-.inputfile {
+.attachment {
   opacity: 0;
   overflow: hidden;
   position: absolute;
   z-index: -1;
 }
-.inputfile + label {
+.attachment + label {
   font-weight: 500;
   display: inline-block;
   cursor: pointer;
 }
 
-.inputfile:focus + label,
-.inputfile + label:hover {
+.attachment:focus + label,
+.attachment + label:hover {
   background-color: #effbff;
 }
 </style>

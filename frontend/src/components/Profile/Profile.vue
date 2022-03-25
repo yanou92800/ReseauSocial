@@ -6,12 +6,10 @@
       <button v-on:click="logout()" class="button">Déconnexion</button>
     </div>
   </div>
-  <allPublications></allPublications>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import allPublications from '../Publication/allPublications'
 export default {
   name: 'Profile',
   mounted() {
@@ -34,9 +32,6 @@ export default {
       this.$router.push('/');
     }
   },
-  components: {
-            'allPublications': allPublications,
-        },
 }
 </script>
 
@@ -75,7 +70,7 @@ p {
   top: 0;
   right: 0;
   left: 0;
-  z-index: 1030;
+  z-index: 1;
 }
 .navbar {
   display: flex;

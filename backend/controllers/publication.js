@@ -1,7 +1,7 @@
 const db = require('../DBConnect');
 
-const sqlCreatePublication = (userId, content) => {
-    return `INSERT INTO publications (userId, content) VALUES ("${userId}", "${content}")`
+const sqlCreatePublication = (userId, content, attachment) => {
+    return `INSERT INTO publications (userId, content, attachment) VALUES ("${userId}", "${content}", "${attachment}")`
 };
 
 const sqlUpdatePublication = (content, userId, id, attachment) => {
@@ -22,42 +22,51 @@ const sqlGetAllPublications = () => {
 
 exports.createPublication = (req, res, next) => {
 
-    const createPublication = sqlCreatePublication(
+    let attachment;
+    if (req.file != undefined) {
+      attachment = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+    } else {
+      attachment == null;
+    }
+    if (req.body.content == "" && req.file == undefined) {
+      res.status(400).json({ error: "Il n'y a aucun contenu à ajouter !" });
+    }
+    else {
+      const createPublication = sqlCreatePublication(
         req.body.userId,
-        req.body.content
-    );
-    
-    // console.log(createPublication),
-
-
-    db.query(
+        req.body.content,
+        req.body.attachment
+        );
+      db.query(
         createPublication,
         function(error, result) {
             if (error) throw error;
+            console.log(error);
             if (result) {
                 // console.log(result)
             }
             res.status(201).json(result)
         }
-    ) 
+      ) 
+    }
 };
 
 exports.getOnePublication = (req, res, next) => {
 
-    // console.log(getOnePublication)
+    //console.log(getOnePublication)
   
     const getOnePublication = sqlGetOnePublication(
       req.params.id
     );
   
-    console.log("getPubli", getOnePublication)
+    //console.log("getPubli", getOnePublication)
     
     db.query(
       getOnePublication,
       function(error, result) {
         if (error) throw error;
         if (result) {
-          // console.log(result[0].username)
+          //console.log(result[0].username)
           }
         res.status(200).json(result)
       }
@@ -116,9 +125,9 @@ exports.getAllPublications = (req, res, next) => {
       getAllPublications,
       function(error, result) {
         if (error) throw error;
-        console.log(error);
+        //console.log(error);
         if (result) {
-          console.log(result)
+          //console.log(result)
           }
         res.status(200).json(result)
       }

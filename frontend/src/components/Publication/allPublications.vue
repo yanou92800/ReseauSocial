@@ -1,4 +1,5 @@
 <template>
+    <Profile></Profile>
     <div class="container">
         <form @submit.prevent="onSubmit">
             <textarea v-model="v$.textareaCreatePublication.$model" type="texte"></textarea>
@@ -6,14 +7,15 @@
         </form>
         <div class="container-card">
             <div v-bind:key="index" v-for="(publication, index) in tableauPublications" class="card">
-                <strong>Posté par {{ publication.username }} le {{ publication.createdAt }} </strong>
-                <item v-bind:id="index" v-bind:publication="publication.content" v-bind:suppression="() => suppression(publication)"></item>
+                <router-link :to="`/onePublication/${publication.id}`">Posté par {{ publication.username }} le {{ publication.createdAt }}</router-link>
+                <item v-bind:id="index" v-bind:publication="publication.content" v-bind:deletePublication="() => deletePublication(publication)"></item>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import Profile from '../Profile/Profile'
 import Item from '../Item'
 import axios from "axios";
 import useVuelidate from '@vuelidate/core'
@@ -58,6 +60,7 @@ export default {
         },
     components: {
             'item': Item,
+            'Profile': Profile
     },
     methods: {
         createPublication() {
@@ -75,12 +78,31 @@ export default {
                 }
             })
             .then((response) => {
-                this.tableauPublications.splice(0, 0, {username: $store.state.user.username, content: this.textareaCreatePublication, createdAt: new Date().getDay()})
+                this.created();
                 this.textareaCreatePublication = '';
                 console.log("createPubli", response)
             })
         },
-        suppression(publication) {
+        async created() {
+            await axios({
+                method: "GET",
+                url: "http://localhost:5000/api/allPublications",
+                headers: { 
+                        "Authorization": `Bearer ${$store.state.user.token}`
+                }
+            })
+            .then((response) => {
+                console.log(response)
+                this.tableauPublications = response.data.map((publication) => {
+                    publication.createdAt = dayjs(publication.createdAt).format("DD-MMM-YYYY à HH:mm");
+                    return publication
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        deletePublication(publication) {
             axios({
                 method: "DELETE",
                 url: `http://localhost:5000/api/deletePublication/${publication.id}`,
@@ -129,5 +151,10 @@ textarea {
     display: flex;
     flex-direction: column;
     word-wrap: break-word;
+}
+a {
+    text-decoration: none;
+    color: black;
+    font-weight: 700;
 }
 </style>

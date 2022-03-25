@@ -37,7 +37,7 @@ const routes = [
 		component: onePublication,
 	},
 	{
-		path: "/allPublications/update/:id",
+		path: "/updatePublication/:id",
 		name: "updatePublication",
 		component: updatePublication,
 	},

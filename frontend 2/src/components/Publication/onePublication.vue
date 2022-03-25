@@ -1,31 +1,18 @@
 <template>
-  <v-container
-    class="d-flex flex-column mx-auto my-10"
-    justify-content="center"
-    align="center"
-  >
+  <v-container class="d-flex flex-column mx-auto my-10" justify-content="center" align="center">
     <v-row>
       <v-col cols="12">
-        <v-card
-          class="mx-auto"
-          align="center"
-          min-width="40vw"
-          max-width="70vw"
-        >
+        <v-card class="mx-auto" align="center" min-width="40vw" max-width="70vw">
           <v-list-item class="red lighten-3" align="start" hover>
-            <router-link :to="`/profile/${publication}`">
+            <router-link :to="`/profile/${publication.userId}`">
               <v-list-item-avatar outlined color="grey darken-3">
                 <v-img :src="publication.avatar" alt="photo de profil"></v-img>
               </v-list-item-avatar>
             </router-link>
 
             <v-list-item-content>
-              <v-list-item-title class="font-weight-medium">{{
-                publication.username
-              }}</v-list-item-title>
-              <v-list-item-title class="text-caption">{{
-                publication.createdAt | formatDate
-              }}</v-list-item-title>
+              <v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
+              <v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
@@ -38,27 +25,30 @@
 
           <v-card-actions align="center">
             <v-col>
+              <v-tooltip v-if="userId">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="mr-5" v-bind="attrs" v-on="on" text small>
-                    <router-link :to="`/publication/update/${publication.id}`">
+                    <router-link :to="`/updatePublication/${publication.id}`">
                       <v-icon color="cyan darken-2" size="1.5rem">mdi-pen-plus</v-icon>
                     </router-link>
                   </v-btn>
                 </template>
                 <span>Modifier</span>
+              </v-tooltip>
+              <v-tooltip v-if="isLogged">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
                     <v-icon size="1.5rem">mdi-delete</v-icon>
                   </v-btn>
                 </template>
                 <span class="ml-5">Supprimer</span>
+              </v-tooltip>
                 <v-dialog v-model="dialog" max-width="500">
                   <v-card>
-                    <v-card-title>Veuillez confirmer la suppression de la publication.</v-card-title>
-                    <v-card-actions @click="dialog = false">
-                      <v-spacer></v-spacer>
-                      <v-btn color="green darken-1" text>Annuler</v-btn>
-                      <v-btn color="green darken-3" text @click="deletepublication">Supprimer la publication</v-btn>
+                    <v-card-title class="justify-center">Supprimer la publication</v-card-title>
+                    <v-card-actions class="justify-center" @click="dialog = false">
+                      <v-btn color="red darken-1" text>Annuler</v-btn>
+                      <v-btn color="red darken-3" text @click="deletePublication">Confirmer</v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
@@ -92,7 +82,7 @@
                     icon
                     v-bind="attrs"
                     v-on="on"
-                    @click="removeLike"
+                    @click="deleteLike()"
                     aria-label="Ne plus aimer cette publication"
                   >
                     <v-icon size="1.5rem" color="green">
@@ -116,119 +106,49 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-card
-          class="mx-auto my-5"
-          min-width="350"
-          max-width="60vw"
-          v-for="comment in publication.Comments"
-          :key="comment.id"
-        >
-          <v-list-item>
-            <router-link :to="`/profile/${comment.User.id}`">
-              <v-list-item-avatar outlined color="grey darken-3">
-                <v-img
-                  x-small
-                  :src="comment.User.avatar"
-                  alt="photo du compte qui commente"
-                ></v-img>
-              </v-list-item-avatar>
-            </router-link>
-
-            <v-card-text
-              ><span class="font-weight-medium text-decoration-underline">{{
-                comment.User.username
-              }}</span>
-              a commenté :</v-card-text
-            >
-          </v-list-item>
-          <v-card-text class="black--text">{{ comment.content }}</v-card-text>
-          <v-list-item>
-            <v-card-text class="end text-caption"
-              >le {{ comment.createdAt | formatDate }}</v-card-text
-            >
-            <v-tooltip
-              right
-              top
-              v-if="comment.User.id == userId || isAdmin == true"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  @click.stop="dialog = true"
-                  v-bind="attrs"
-                  v-on="on"
-                  text
-                  color="deep-orange darken-3"
-                  small
-                  aria-label="Supprimer ce commentaire"
+        <v-card class="mx-auto">
+          <v-container>
+            <v-card flat>
+              <div>
+                <v-form
+                  ref="form"
+                  v-model="valid"
+                  @submit.prevent="createComment()"
+                  v-on:getAllComments="mounted()"
                 >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </template>
-              <span>Supprimer</span>
-              <v-dialog v-model="dialog" max-width="500">
-                <v-card>
-                  <v-card-title>
-                    Supprimer votre commentaire ?
-                  </v-card-title>
-
-                  <v-card-actions @click="dialog = false">
-                    <v-spacer></v-spacer>
-
-                    <v-btn color="green darken-1" text>
-                      Annuler
-                    </v-btn>
-
+                  <v-textarea
+                    id="postCom"
+                    outlined
+                    v-model="comment"
+                    type="text"
+                    placeholder="Votre commentaire..."
+                    required
+                    :rules="commentRules"
+                  ></v-textarea>
+                  <div align="center">
                     <v-btn
-                      color="green darken-3"
-                      text
-                      @click="deleteComment(comment.id)"
+                      type="submit"
+                      small
+                      value="submit"
+                      color="cyan darken-2"
+                      dark
+                      :disabled="!valid"
+                      >Poster</v-btn
                     >
-                      Supprimer
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-tooltip>
-          </v-list-item>
+                  </div>
+                </v-form>
+              </div>
+            </v-card>
+          </v-container>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card v-bind:key="index" v-for="(comment, index) in commentList" class="mx-auto my-5" min-width="350" max-width="60vw">
+          <strong>Commenté par {{ comment.username }} le {{ comment.createdAt | formatDate }} </strong>
+          <v-card-text class="text-start">{{ comment.content }}</v-card-text>
         </v-card>
       </v-col>
     </v-row>
-    <v-col cols="12">
-      <v-card class="mx-auto">
-        <v-container>
-          <v-card flat>
-            <div>
-              <v-form
-                ref="form"
-                v-model="valid"
-                @submit.prevent="commentSubmit()"
-              >
-                <v-textarea
-                  id="postCom"
-                  outlined
-                  v-model="comment"
-                  type="text"
-                  placeholder="Votre commentaire..."
-                  required
-                  :rules="commentRules"
-                ></v-textarea>
-                <div align="center">
-                  <v-btn
-                    type="submit"
-                    small
-                    value="submit"
-                    color="cyan darken-2"
-                    dark
-                    :disabled="!valid"
-                    >Poster</v-btn
-                  >
-                </div>
-              </v-form>
-            </div>
-          </v-card>
-        </v-container>
-      </v-card>
-    </v-col>
   </v-container>
 </template>
 
@@ -254,6 +174,7 @@ export default {
         Comments: [],
       },
       comment: "",
+      commentList: [],
       Likes: [],
       isLiked: 0,
       dialog: false,
@@ -275,11 +196,21 @@ export default {
         console.log(error);
     });   
   },
+  mounted() {
+		PublicationService.getAllComments(this.$route.params.id, $store.state.token)
+			.then((comment) => {
+				//console.log("Tableau" , publication)
+				this.commentList = comment;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	},
   methods: {
     toBottom() {
       this.$vuetify.goTo("#postCom");
     },
-    deletepublication() {
+    deletePublication() {
       this.dialog = false;
       axios
         .delete(
@@ -305,7 +236,7 @@ export default {
           });
         });
     },
-    commentSubmit() {
+    createComment() {
       console.log($store.state)
       if (this.$refs.form.validate()) {
         axios
@@ -322,14 +253,12 @@ export default {
               },
             }
           )
-          .then(() => {
+          .then((response) => {
+            this.mounted();
             this.$store.dispatch("setSnackbar", {
               text: "Commentaire ajouté.",
             });
-            PublicationService.getOnePublication(this.$route.params.id, $store.state.token)
-            .then((publication) => {
-              this.publication = publication
-            })
+            console.log("createComment", response)
           })
           .catch(() => {
             this.$store.dispatch("setSnackbar", {
@@ -338,10 +267,20 @@ export default {
           });
       }
     },
+    mounted() {
+      PublicationService.getAllComments(this.$route.params.id, $store.state.token)
+        .then((comment) => {
+          //console.log("Tableau" , publication)
+          this.commentList = comment;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     deleteComment(id) {
       axios
         .delete(
-          "http://localhost:5000/api/deletePublication/" +
+          "http://localhost:5000/api/onePublication/" +
             +this.$route.params.id +
             "/deleteComment/" +
             id,
@@ -428,13 +367,12 @@ export default {
         });
       }
     },
-    removeLike() {
+    deleteLike() {
       if (this.isLiked == 1) {
         axios
           .delete(
-            "http://localhost:5000/api/onePublication/" +
-              +this.$route.params.id +
-              "/deleteLike",
+            "http://localhost:5000/api/deleteLike/" +
+            this.$route.params.id,
             {
               headers: {
                 Authorization: `Bearer ${$store.state.token}`,
@@ -443,6 +381,7 @@ export default {
           )
           .then((response) => {
             this.like = response.data;
+            console.log(response.data)
             this.$store.dispatch("setSnackbar", {
               text: "Like supprimé.",
             });
@@ -456,6 +395,16 @@ export default {
           });
       }
     },
+    getAllComments() {
+		PublicationService.getAllComments(this.$route.params.id, $store.state.token)
+			.then((comment) => {
+				//console.log("Tableau" , publication)
+				this.commentList = comment;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	},
   },
   filters: {
     formatDate(value) {
@@ -465,7 +414,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["isAdmin", "userId"]),
+    ...mapState(["isLogged", "isAdmin", "userId"]),
   },
 };
 </script>

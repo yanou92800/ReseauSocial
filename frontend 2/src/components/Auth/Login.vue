@@ -60,7 +60,7 @@ export default {
 				.catch(() => {
 					this.$store.dispatch("setSnackbar", {
 						color: "error",
-						text: `Identifiants incorrects !`,
+						text: `Mot de passe incorrect !`,
 					});
 				});
 		},
