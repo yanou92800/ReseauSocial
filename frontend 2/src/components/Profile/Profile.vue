@@ -6,18 +6,18 @@
           <v-list-item color="blue">
             <v-list-item-content>
               <v-img :src="user.infos.avatar"></v-img>
-              <v-list-item-title class="title" align="center">username: {{ user.infos.username }}</v-list-item-title>
-              <button>Modifier son email</button>
+              <v-list-item-title class="title" align="center">{{ user.infos.username }}</v-list-item-title>
+              <button v-if="user.infos.id == $store.state.userId">Modifier mon email</button>
             </v-list-item-content>
           </v-list-item>
         </v-card>
       </v-col>
-      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == user.infos.userId">
+      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1">
         <v-form ref="form" @submit.prevent="updateProfile">
           <v-card>
             <div class="my-5">
               <input type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"/>
-              <label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon> Changer d'avatar</label>
+              <label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon>Changer d'avatar</label>
             </div>
             <div class="space">
               <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>
@@ -27,14 +27,16 @@
               <v-btn type="submit" color="success" dark aria-label="Sauvegarder">
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
-              <v-btn @click.stop="dialog = true" v-if="user.id === userId" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon>mdi-delete</v-icon></v-btn>
+              <v-btn @click.stop="dialog = true" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon>mdi-delete</v-icon></v-btn>
               <v-dialog v-model="dialog" max-width="500">
                 <v-card>
-                  <v-card-title>Êtes vous sûr de vouloir supprimer votre profil ?</v-card-title>
+                  <v-card-title v-if="user.infos.id == $store.state.userId">Êtes vous sûr de vouloir supprimer votre profil ?</v-card-title>
+                  <v-card-title v-else>Êtes vous sûr de vouloir supprimer son profil ?</v-card-title>
                   <v-card-actions @click="dialog = false">
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text>Non</v-btn>
-                  <v-btn color="red darken-3" text @click="deleteProfile">Oui, je veux supprimer mon compte.</v-btn>
+                  <v-btn color="red darken-3" text @click="deleteProfile" v-if="user.infos.id == $store.state.userId">Oui, je veux supprimer mon compte.</v-btn>
+                  <v-btn color="red darken-3" text @click="deleteProfile" v-else>Oui, je veux supprimer son compte.</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -53,7 +55,9 @@ export default {
   name: "Profile",
   data() {
     return {
-      user: {},
+      user: {
+        infos: {},
+      },
       file: "",
       imgPreview: "",
       dialog: false,

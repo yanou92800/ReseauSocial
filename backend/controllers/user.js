@@ -92,8 +92,8 @@ exports.login = (req, res, next) => {
                           return res.status(401).json({ message: 'Mot de passe incorrect.' })
                       };
                       res.status(200).json({
-                        avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg',
-                        userId: result[0].id,
+                        avatar: result[0].avatar,
+                        id: result[0].id,
                         username: result[0].username,
                         email: result[0].email,
                         token: jwt.sign(
@@ -169,16 +169,17 @@ exports.getUserInfos = (req, res, next) => {
     function(error, result) {
       if (error) throw error;
       if (result) {
-        // console.log(result[0].username)
+        console.log(result)
         }
       res.status(200).json({
         message: 'Acces au profil',
         infos: {
           username: result[0].username,
-          avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg',
+          avatar: result[0].avatar,
           email: result[0].email,
           password: result[0].password,
-          isAdmin: result[0].isAdmin
+          isAdmin: result[0].isAdmin,
+          id: result[0].id
         }
       })
     }

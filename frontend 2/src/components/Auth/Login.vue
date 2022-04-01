@@ -37,7 +37,7 @@ export default {
           console.log("Login OK! ", response);
           this.$store.dispatch("setToken", response.data.token);
           this.$store.dispatch("setAdmin", response.data.isAdmin);
-          this.$store.dispatch("setUser", response.data.userId);
+          this.$store.dispatch("setUser", response.data.id);
           this.$store.dispatch("setUsername", response.data.username);
           this.$store.dispatch("setSnackbar", {
             text: `Salut, ${response.data.username} !`,
