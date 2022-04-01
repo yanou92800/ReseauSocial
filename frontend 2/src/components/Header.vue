@@ -18,10 +18,10 @@
     </v-tooltip>
 
     <v-spacer></v-spacer>
-    <span class="mr-5">Bienvenue {{ this.$store.state.username }}</span>
+    <span class="mr-5">Bienvenue {{ username }}</span>
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn @click="myProfile()" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de mon profile">
+        <v-btn @click="myProfile" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de mon profile">
           <v-img :src="avatar" width="1vw" class="mx-2 rounded-lg"></v-img>
         </v-btn>
       </template>
@@ -43,13 +43,8 @@
 import { mapState } from 'vuex'
 export default {
   name: "Header",
-  data() {
-    return {
-      avatar: this.$store.state.avatar
-    };
-  },
   computed:{
-    ...mapState(['isLogged', 'username'])
+    ...mapState(['isLogged', "avatar", "username"])
   },
   methods: {
     logout() {

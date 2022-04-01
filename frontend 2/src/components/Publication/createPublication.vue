@@ -43,8 +43,8 @@ export default {
       this.file = this.$refs.file.files[0];
       this.imgPreview = URL.createObjectURL(this.file);
     },
-    createPublication() {
-      console.log($store.state);
+    createPublication(response) {
+      console.log("localStorage" , response);
       const fd = new FormData();
       fd.append("userId", $store.state.userId);
       fd.append("content", this.content);

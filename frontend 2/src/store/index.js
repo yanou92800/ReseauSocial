@@ -10,7 +10,7 @@ export default new Vuex.Store({
 		token: null,
 		userId: null,
 		username: null,
-		avatar: "https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg",
+		avatar: null,
 		isAdmin: 0,
 		isLogged: false,
 		snackbar: {},
@@ -22,6 +22,9 @@ export default new Vuex.Store({
 		},
 		setAdmin(state, admin) {
 			state.isAdmin = admin;
+		},
+		setAvatar(state, avatar) {
+			state.avatar = avatar;
 		},
 		setUser(state, user) {
 			state.userId = user;
@@ -36,7 +39,7 @@ export default new Vuex.Store({
 			state.token = ''
 			state.userId = '',
 			state.username = '',
-			state.avatar = "https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg",
+			state.avatar = '',
 			state.isAdmin = 0,
 			state.isLogged = false,
 			state.snackbar = {}
@@ -48,6 +51,9 @@ export default new Vuex.Store({
 		},
 		setAdmin({ commit }, admin) {
 			commit("setAdmin", admin);
+		},
+		setAvatar({ commit }, avatar) {
+			commit("setAvatar", avatar);
 		},
 		setUser({ commit }, user) {
 			commit("setUser", user);

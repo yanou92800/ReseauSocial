@@ -7,10 +7,18 @@
             <v-list-item-content>
               <v-img :src="user.infos.avatar"></v-img>
               <v-list-item-title class="title" align="center">{{ user.infos.username }}</v-list-item-title>
-              <button v-if="user.infos.id == $store.state.userId">Modifier mon email</button>
             </v-list-item-content>
           </v-list-item>
         </v-card>
+      </v-col>
+      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId">
+        <v-card-text>
+          <v-form v-model="valid" ref="form">
+            <v-text-field v-model="userInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
+            <v-text-field v-model="userInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
+            <v-text-field v-model="userInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
+          </v-form>
+        </v-card-text>
       </v-col>
       <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1">
         <v-form ref="form" @submit.prevent="updateProfile">
@@ -24,7 +32,7 @@
               <img contain height="400" v-if="imgPreview" :src="user.imgPreview" />
             </div>
             <v-card-actions>
-              <v-btn type="submit" color="success" dark aria-label="Sauvegarder">
+              <v-btn type="submit" color="success" dark aria-label="Sauvegarder" @click="updateProfile">
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
               <v-btn @click.stop="dialog = true" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon>mdi-delete</v-icon></v-btn>
@@ -55,9 +63,37 @@ export default {
   name: "Profile",
   data() {
     return {
+      valid: false,
+      showPassword: false,
       user: {
         infos: {},
       },
+      userInfo: {
+        username: "",
+        email: "",
+        password: ""
+      },
+      usernameRules: [
+        (v) =>
+          (v && v.length >= 5) ||
+          "Le nom d'utilisateur doit comprendre entre 5 et 30 caractères et peut contenir des tirets/espaces/apostrophes.",
+      ],
+      passwordRules: [
+        (v) =>
+          (v && v.length >= 6) ||
+          "Doit contenir entre 6 et 20 caractères avec un caractère alphabétique, un caractère spécial et un chiffre.",
+        (v) =>
+          /(?=.*[A-Za-z])/.test(v) ||
+          "Doit contenir un caractère alphabétique en majuscule ou minuscule.",
+        (v) => /(?=.*\d)/.test(v) || "Doit contenir un chiffre.",
+        (v) =>
+          /(?=.*[$@$!%*#?&])/.test(v) || "Doit contenir un caractère spécial.",
+      ],
+      emailRules: [
+        (v) =>
+          /^[a-zA-Z0-9_.-]+[@]{1}[a-zA-Z0-9]+[.]{1}[a-zA-Z]{2,10}$/.test(v) ||
+          "Le format de l'email doit être de type name@domaine.com",
+      ],
       file: "",
       imgPreview: "",
       dialog: false,
@@ -85,7 +121,11 @@ export default {
     },
     updateProfile() {
       const fd = new FormData();
+      fd.append("email", this.email);
+      fd.append("username", this.username);
       fd.append("avatar", this.file);
+
+      if (this.$refs.form.validate()) {
       axios
         .put(
           "http://localhost:5000/api/updateProfil/" + this.$route.params.id,
@@ -105,6 +145,7 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+      }
     },
     deleteProfile() {
       this.dialog = false;

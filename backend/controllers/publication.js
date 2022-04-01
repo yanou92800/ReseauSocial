@@ -50,8 +50,6 @@ exports.createPublication = (req, res, next) => {
 };
 
 exports.getOnePublication = (req, res, next) => {
-
-    //console.log(getOnePublication)
   
     const getOnePublication = sqlGetOnePublication(
       req.params.id

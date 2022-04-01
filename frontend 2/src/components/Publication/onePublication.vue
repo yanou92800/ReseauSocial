@@ -127,13 +127,7 @@ export default {
   components: {},
   data() {
     return {
-      user: {},
       publication: {
-        User: {
-          id: "",
-          username: "",
-          avatar: "",
-        },
         Comments: [],
       },
       comment: "",

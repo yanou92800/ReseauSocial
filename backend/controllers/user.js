@@ -123,7 +123,7 @@ exports.updateProfile = (req, res, next) => {
       req.params.id
   );
   
-  //console.log(updateProfile);
+  console.log(updateProfile);
   
   db.query(
           updateProfile,
