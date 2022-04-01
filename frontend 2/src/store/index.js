@@ -10,7 +10,7 @@ export default new Vuex.Store({
 		token: null,
 		userId: null,
 		username: null,
-		avatar: null,
+		avatar: "https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg",
 		isAdmin: 0,
 		isLogged: false,
 		snackbar: {},
@@ -36,6 +36,7 @@ export default new Vuex.Store({
 			state.token = ''
 			state.userId = '',
 			state.username = '',
+			state.avatar = "https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg",
 			state.isAdmin = 0,
 			state.isLogged = false,
 			state.snackbar = {}

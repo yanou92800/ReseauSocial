@@ -3,12 +3,12 @@
     <div class="container">
         <form @submit.prevent="onSubmit">
             <textarea v-model="v$.textareaCreateComment.$model" type="texte"></textarea>
-            <button :disabled="v$.textareaCreateComment.$invalid" v-on:click.prevent="createComment">Commenter</button>
+            <button :disabled="v$.textareaCreateComment.$invalid" @click.prevent="createComment">Commenter</button>
         </form>
         <div class="container-card">
-            <div v-bind:key="index" v-for="(comment, index) in tableauComments" class="card">
+            <div :key="index" v-for="(comment, index) in tableauComments" class="card">
                 <strong>Posté par {{ comment.username }} le {{ comment.createdAt }} </strong>
-                <strong v-bind:comment="comment.content"></strong>
+                <strong :comment="comment.content"></strong>
             </div>
         </div>
     </div>

@@ -3,12 +3,12 @@
     <div class="container">
         <form @submit.prevent="onSubmit">
             <textarea v-model="v$.textareaCreatePublication.$model" type="texte"></textarea>
-            <button :disabled="v$.textareaCreatePublication.$invalid" v-on:click.prevent="createPublication">Publier</button>
+            <button :disabled="v$.textareaCreatePublication.$invalid" @click.prevent="createPublication">Publier</button>
         </form>
         <div class="container-card">
-            <div v-bind:key="index" v-for="(publication, index) in tableauPublications" class="card">
+            <div :key="index" v-for="(publication, index) in tableauPublications" class="card">
                 <router-link :to="`/onePublication/${publication.id}`">Posté par {{ publication.username }} le {{ publication.createdAt }}</router-link>
-                <item v-bind:id="index" v-bind:publication="publication.content" v-bind:deletePublication="() => deletePublication(publication)"></item>
+                <item :id="index" :publication="publication.content" :deletePublication="() => deletePublication(publication)"></item>
             </div>
         </div>
     </div>

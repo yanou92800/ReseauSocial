@@ -19,7 +19,7 @@
             @change="selectFile"
           />
           <label for="file"
-            ><v-icon color="green darken-2" hover>mdi-camera-plus</v-icon>
+            ><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon>
             Ajouter une image</label
           >
         </div>
@@ -41,7 +41,7 @@
         <div>
           <v-btn
             text
-            color="green accent-5"
+            color="red accent-5"
             type="submit"
             value="submit"
             :disabled="!valid"
@@ -84,6 +84,7 @@ export default {
     },
     updatePublication() {
       const fd = new FormData();
+      fd.append("userId", $store.state.userId);
       fd.append("content", this.content);
       fd.append("attachment", this.file);
 

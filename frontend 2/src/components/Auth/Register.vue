@@ -1,46 +1,15 @@
 <template>
   <v-container>
-    <v-carousel
-      cycle
-      height="400"
-      hide-delimiter-background
-      show-arrows-on-hover
-    >
-      <v-carousel-item v-for="(slide, i) in slides" :key="i">
-        <v-sheet :color="colors[i]" height="100%">
-          <v-row class="fill-height" align="center" justify="center">
-            <div class="text-h2">{{ slide }}</div>
-          </v-row>
-        </v-sheet>
-      </v-carousel-item>
-    </v-carousel>
-	
+    <v-row align="center" justify="center">
+			<v-btn class="red accent-2" elevation="2" plain small to="/">Connexion</v-btn>
+		</v-row>
     <v-card width="400" class="mx-auto mt-5 red lighten-5">
       <v-card-title>S'inscrire</v-card-title>
       <v-card-text>
         <v-form v-model="valid" ref="form">
-          <v-text-field
-            v-model="userInfo.username"
-            label="Username"
-            prepend-icon="mdi-account-circle"
-            :rules="usernameRules"
-          />
-          <v-text-field
-            v-model="userInfo.email"
-            label="Email"
-            type="email"
-            prepend-icon="mdi-account-circle"
-            :rules="emailRules"
-          />
-          <v-text-field
-            v-model="userInfo.password"
-            :type="showPassword ? 'text' : 'password'"
-            label="Password"
-            prepend-icon="mdi-lock"
-            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="passwordRules"
-            @click:append="showPassword = !showPassword"
-          />
+          <v-text-field v-model="userInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
+          <v-text-field v-model="userInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
+          <v-text-field v-model="userInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -58,20 +27,12 @@ export default {
   name: "Register",
   data() {
     return {
-      colors: [
-        "indigo",
-        "warning",
-        "pink darken-2",
-        "red lighten-1",
-        "deep-purple accent-4",
-      ],
-      slides: ["Ola !", "Welcome", "chez ...", "Groupo...", "...mania !"],
       valid: false,
       showPassword: false,
       userInfo: {
         username: "",
         email: "",
-        password: "",
+        password: ""
       },
       usernameRules: [
         (v) =>

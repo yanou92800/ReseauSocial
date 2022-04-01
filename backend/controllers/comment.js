@@ -72,7 +72,7 @@ exports.updateComment = (req, res, next) => {
 
     const updateComment = sqlUpdateComment(
         req.body.content,
-        req.body.id
+        req.params.id
     );
 
         //console.log(updateComment),

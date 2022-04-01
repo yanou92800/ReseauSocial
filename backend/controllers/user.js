@@ -66,7 +66,8 @@ exports.login = (req, res, next) => {
     checkEmail,
     (err, result) => {
         if (err) res.status(500).json({ error: "erreur serveur" });
-        if (!result) {
+        console.log(result)
+        if (result.length == 0) {
             return res.status(401).json({ message: "Utilisateur non trouvé." });
         }
         
@@ -81,32 +82,31 @@ exports.login = (req, res, next) => {
             req.body.email,
             (err, result) => {
                 if (err) throw err;
-                if (!req.body.password) {
+                if (result.length == 0) {
                     return res.status(401).json({ message: 'Veuillez entrer un mot de passe.' })
                 }
                 if (result) {
-                  //console.log(result[0].password)
+                  bcrypt.compare(req.body.password, result[0].password)
+                  .then(valid => {
+                      if (!valid) {
+                          return res.status(401).json({ message: 'Mot de passe incorrect.' })
+                      };
+                      res.status(200).json({
+                        avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg',
+                        userId: result[0].id,
+                        username: result[0].username,
+                        email: result[0].email,
+                        token: jwt.sign(
+                            {userToken: result[0].id},
+                            process.env.TOKEN,
+                            {expiresIn: '24h'},
+                            ),
+                        isAdmin: result[0].isAdmin
+                      });
+                  })
+                  .catch(error => res.status(500).json({ error }));
                 }
-                bcrypt.compare(req.body.password, result[0].password)
-                .then(valid => {
-                    if (!valid) {
-                        return res.status(401).json({ message: 'Mot de passe incorrect.' })
-                    };
-                    res.status(200).json({
-                      userId: result[0].id,
-                      username: result[0].username,
-                      email: result[0].email,
-                      token: jwt.sign(
-                          {userToken: result[0].id},
-                          process.env.TOKEN,
-                          {expiresIn: '24h'},
-                          ),
-                      avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg'
-                    });
-                })
-                .catch(error => res.status(500).json({ error }));
-            }
-        )
+            })
     }
   )
 }
@@ -177,7 +177,8 @@ exports.getUserInfos = (req, res, next) => {
           username: result[0].username,
           avatar: 'https://www.photoprof.fr/images_dp/photographes/profil_vide.jpg',
           email: result[0].email,
-          password: result[0].password
+          password: result[0].password,
+          isAdmin: result[0].isAdmin
         }
       })
     }

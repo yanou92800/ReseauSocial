@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-card class="mx-auto" align="center" min-width="40vw" max-width="70vw">
-          <v-list-item class="red lighten-3" align="start" hover>
+          <v-list-item class="red" align="start" hover>
             <router-link :to="`/profile/${publication.userId}`">
               <v-list-item-avatar outlined color="grey darken-3">
                 <v-img :src="publication.avatar" alt="photo de profil"></v-img>
@@ -19,13 +19,13 @@
           <v-row>
             <v-col>
               <v-card-text class="text-start">{{ publication.content }}</v-card-text>
-              <!-- <v-img contain max-height="600" :src="publication[0].attachment"></v-img> -->
+              <v-img contain max-height="300" :src="publication.attachment"></v-img>
             </v-col>
           </v-row>
 
           <v-card-actions align="center">
             <v-col>
-              <v-tooltip v-if="userId">
+              <v-tooltip v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="mr-5" v-bind="attrs" v-on="on" text small>
                     <router-link :to="`/updatePublication/${publication.id}`">
@@ -33,15 +33,15 @@
                     </router-link>
                   </v-btn>
                 </template>
-                <span>Modifier</span>
+                <i>Modifier</i>
               </v-tooltip>
-              <v-tooltip v-if="isLogged">
+              <v-tooltip v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
                     <v-icon size="1.5rem">mdi-delete</v-icon>
                   </v-btn>
                 </template>
-                <span class="ml-5">Supprimer</span>
+                <i class="mt-5">Supprimer</i>
               </v-tooltip>
                 <v-dialog v-model="dialog" max-width="500">
                   <v-card>
@@ -56,19 +56,11 @@
             <v-col>
               <v-tooltip top v-if="!isLiked">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    icon
-                    v-bind="attrs"
-                    v-on="on"
-                    @click="addLike"
-                    aria-label="Aimer cette publication"
-                  >
-                    <v-icon size="1.5rem" color="green">
-                      mdi-thumb-up-outline
-                    </v-icon>
+                  <v-btn icon v-bind="attrs" v-on="on" @click="addLike" aria-label="Aimer cette publication">
+                    <v-icon size="1.5rem" color="yellow">mdi-thumb-up-outline</v-icon>
                   </v-btn>
                 </template>
-                <div v-bind:key="index" v-for="(like, index) in Likes" class="card">
+                <div :key="index" v-for="(like, index) in Likes" class="card">
                   <v-list-item-avatar outlined color="grey darken-3">
                     <v-img :src="like.avatar" alt="photo de profil"></v-img>
                   </v-list-item-avatar>
@@ -78,20 +70,12 @@
               </v-tooltip>
               <v-tooltip top v-else-if="isLiked">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    icon
-                    v-bind="attrs"
-                    v-on="on"
-                    @click="deleteLike()"
-                    aria-label="Ne plus aimer cette publication"
-                  >
-                    <v-icon size="1.5rem" color="green">
-                      mdi-thumb-up
-                    </v-icon>
+                  <v-btn icon v-bind="attrs" v-on="on" @click="deleteLike()" aria-label="Ne plus aimer cette publication">
+                    <v-icon size="1.5rem" color="yellow">mdi-thumb-up</v-icon>
                   </v-btn>
                 </template>
-                <div v-bind:key="index" v-for="(like, index) in Likes" class="card">
-                  <v-list-item-avatar outlined color="grey darken-3">
+                <div :key="index" v-for="(like, index) in Likes" class="card">
+                  <v-list-item-avatar outlined color="blue darken-3">
                     <v-img :src="like.avatar" alt="photo de profil"></v-img>
                   </v-list-item-avatar>
                   <strong>{{ like.username }}</strong>
@@ -106,35 +90,14 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-card class="mx-auto">
+        <v-card class="mx-auto" align="center">
           <v-container>
-            <v-card flat>
+            <v-card flat width="45vw">
               <div>
-                <v-form
-                  ref="form"
-                  v-model="valid"
-                  @submit.prevent="createComment()"
-                  v-on:getAllComments="mounted()"
-                >
-                  <v-textarea
-                    id="postCom"
-                    outlined
-                    v-model="comment"
-                    type="text"
-                    placeholder="Votre commentaire..."
-                    required
-                    :rules="commentRules"
-                  ></v-textarea>
+                <v-form ref="form" v-model="valid" @submit.prevent="createComment()" v-on:getAllComments="mounted()">
+                  <v-textarea id="postCom" outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
                   <div align="center">
-                    <v-btn
-                      type="submit"
-                      small
-                      value="submit"
-                      color="cyan darken-2"
-                      dark
-                      :disabled="!valid"
-                      >Poster</v-btn
-                    >
+                    <v-btn type="submit" small value="submit" color="red darken-2" dark :disabled="!valid">Poster</v-btn>
                   </div>
                 </v-form>
               </div>
@@ -143,7 +106,7 @@
         </v-card>
       </v-col>
       <v-col cols="12">
-        <v-card v-bind:key="index" v-for="(comment, index) in commentList" class="mx-auto my-5" min-width="350" max-width="60vw">
+        <v-card :key="index" v-for="(comment, index) in commentList" class="px-5 py-5 my-5" width="60vw">
           <strong>Commenté par {{ comment.username }} le {{ comment.createdAt | formatDate }} </strong>
           <v-card-text class="text-start">{{ comment.content }}</v-card-text>
         </v-card>
@@ -207,10 +170,54 @@ export default {
 			});
 	},
   methods: {
+    deleteLike() {
+      console.log("DELETE", this.isLiked)
+      if (this.isLiked == 1) {
+        let id = null;
+        for (let i = 0; i < this.Likes.length; i++) {
+            if (this.Likes[i].userId == $store.state.userId) {
+              id = this.Likes[i].id;
+              break;
+            }
+          }
+        if(id) {
+        axios
+          .delete(
+            "http://localhost:5000/api/deleteLike/" +
+            id,
+            {
+              headers: {
+                Authorization: `Bearer ${$store.state.token}`,
+              },
+              data: {
+                userId: $store.state.userId
+              }
+            }
+          )
+          .then((response) => {
+            this.isLiked = 0;
+            console.log(response.data)
+            this.$store.dispatch("setSnackbar", {
+              text: "Like supprimé.",
+            });
+            this.$router.go();
+          })
+          .catch(() => {
+            this.$store.dispatch("setSnackbar", {
+              color: "error",
+              text: "Veuillez réessayer.",
+            });
+          });
+        }
+        else {
+          console.log("id inconnu")
+        }
+      }
+    },
     toBottom() {
       this.$vuetify.goTo("#postCom");
     },
-    deletePublication() {
+    deletePublication(publication) {
       this.dialog = false;
       axios
         .delete(
@@ -218,6 +225,9 @@ export default {
           {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
+            },
+            data: {
+              userId: publication.userId
             },
           }
         )
@@ -258,6 +268,7 @@ export default {
             this.$store.dispatch("setSnackbar", {
               text: "Commentaire ajouté.",
             });
+            this.comment = "";
             console.log("createComment", response)
           })
           .catch(() => {
@@ -367,34 +378,6 @@ export default {
         });
       }
     },
-    deleteLike() {
-      if (this.isLiked == 1) {
-        axios
-          .delete(
-            "http://localhost:5000/api/deleteLike/" +
-            this.$route.params.id,
-            {
-              headers: {
-                Authorization: `Bearer ${$store.state.token}`,
-              },
-            }
-          )
-          .then((response) => {
-            this.like = response.data;
-            console.log(response.data)
-            this.$store.dispatch("setSnackbar", {
-              text: "Like supprimé.",
-            });
-            this.$router.go();
-          })
-          .catch(() => {
-            this.$store.dispatch("setSnackbar", {
-              color: "error",
-              text: "Veuillez réessayer.",
-            });
-          });
-      }
-    },
     getAllComments() {
 		PublicationService.getAllComments(this.$route.params.id, $store.state.token)
 			.then((comment) => {
@@ -414,12 +397,16 @@ export default {
     },
   },
   computed: {
-    ...mapState(["isLogged", "isAdmin", "userId"]),
+    ...mapState(["isAdmin", "userId"]),
   },
 };
 </script>
 <style scoped>
 a {
   text-decoration: none;
+}
+
+.container {
+  padding: 5vw 0vw 2vw 0vw;
 }
 </style>

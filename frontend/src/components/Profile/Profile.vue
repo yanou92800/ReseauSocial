@@ -2,8 +2,8 @@
   <div class="header-top">
     <div class="navbar">
       <p>Bienvenue {{ user.username }}</p>
-      <img v-bind:src="user.avatar"/>
-      <button v-on:click="logout()" class="button">Déconnexion</button>
+      <img :src="user.avatar"/>
+      <button @click="logout()" class="button">Déconnexion</button>
     </div>
   </div>
 </template>

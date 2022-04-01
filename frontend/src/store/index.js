@@ -27,13 +27,7 @@ if (!user) {
 // Create a new store instance.
 const store = createStore({
   state: {
-    status: '',
     user: user,
-    userInfos: {
-      username:'',
-      email: '',
-      avatar: '',
-    },
   },
   mutations: {
     setStatus(state, status) {
@@ -44,8 +38,8 @@ const store = createStore({
       localStorage.setItem('user', JSON.stringify(user));
       state.user = user;
     },
-    userInfos(state, userInfos) {
-      state.userInfos = userInfos;
+    userInfos(state, user) {
+      state.userInfos = user;
     },
     logout(state) {
       state.user = {

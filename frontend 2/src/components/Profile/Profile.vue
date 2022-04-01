@@ -1,74 +1,40 @@
 <template>
-  <v-app class="blue-grey lighten-5">
+  <v-app class="blue">
     <v-row class="my-10">
-      <v-col md="4" cols="12">
-        <v-card class="mx-5">
-          <v-list-item color="rgba(0, 0, 0, .4)">
+      <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-card>
+          <v-list-item color="blue">
             <v-list-item-content>
               <v-img :src="user.infos.avatar"></v-img>
-              <v-list-item-title class="title" align="center">
-                username: {{ user.infos.username }}
-              </v-list-item-title>
-              <v-list-item>email: {{ user.infos.email }}</v-list-item>
+              <v-list-item-title class="title" align="center">username: {{ user.infos.username }}</v-list-item-title>
+              <button>Modifier son email</button>
             </v-list-item-content>
           </v-list-item>
         </v-card>
       </v-col>
-      <v-col md="8" cols="12" v-if="user.infos.id == user.infos.userId">
+      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == user.infos.userId">
         <v-form ref="form" @submit.prevent="updateProfile">
-          <v-card class="mx-5">
+          <v-card>
             <div class="my-5">
-              <input
-                type="file"
-                ref="file"
-                name="file"
-                id="file"
-                class="attachment"
-                @change="selectFile"
-              />
-              <label for="file"
-                ><v-icon color="green darken-2" class="ml-5" hover
-                  >mdi-camera-plus</v-icon
-                >
-                Changer d'avatar</label
-              >
+              <input type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"/>
+              <label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon> Changer d'avatar</label>
             </div>
             <div class="space">
               <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>
               <img contain height="400" v-if="imgPreview" :src="user.imgPreview" />
             </div>
             <v-card-actions>
-              <v-btn 
-                type="submit"
-                color="success"
-                dark
-                aria-label="Sauvegarder">
+              <v-btn type="submit" color="success" dark aria-label="Sauvegarder">
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
-              <v-btn
-                @click.stop="dialog = true"
-                v-if="user.id === userId"
-                color="red darken-2"
-                dark
-                aria-label="Supprimer le compte"
-                ><v-icon>mdi-delete</v-icon></v-btn
-              >
+              <v-btn @click.stop="dialog = true" v-if="user.id === userId" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon>mdi-delete</v-icon></v-btn>
               <v-dialog v-model="dialog" max-width="500">
                 <v-card>
-                  <v-card-title>
-                    Êtes vous sûr de vouloir supprimer votre profil ?
-                  </v-card-title>
-
+                  <v-card-title>Êtes vous sûr de vouloir supprimer votre profil ?</v-card-title>
                   <v-card-actions @click="dialog = false">
-                    <v-spacer></v-spacer>
-
-                    <v-btn color="green darken-1" text>
-                      Non
-                    </v-btn>
-
-                    <v-btn color="green darken-3" text @click="deleteProfile">
-                      Oui, je veux supprimer mon compte.
-                    </v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text>Non</v-btn>
+                  <v-btn color="red darken-3" text @click="deleteProfile">Oui, je veux supprimer mon compte.</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -115,7 +81,7 @@ export default {
     },
     updateProfile() {
       const fd = new FormData();
-      fd.append("attachment", this.file);
+      fd.append("avatar", this.file);
       axios
         .put(
           "http://localhost:5000/api/updateProfil/" + this.$route.params.id,
@@ -166,20 +132,21 @@ export default {
 </script>
 
 <style scoped>
-.attachment {
+.avatar {
   opacity: 0;
   overflow: hidden;
   position: absolute;
   z-index: -1;
 }
-.attachment + label {
+.avatar + label {
   font-weight: 500;
   display: inline-block;
   cursor: pointer;
 }
 
-.attachment:focus + label,
-.attachment + label:hover {
+.avatar:focus + label,
+.avatar + label:hover {
   background-color: #effbff;
 }
+
 </style>

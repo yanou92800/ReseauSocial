@@ -33,7 +33,7 @@ exports.deleteLike = (req, res, next) => {
         req.params.id,
     );
 
-    //console.log(deleteLike)
+    console.log(deleteLike)
 
     db.query(
         deleteLike,
