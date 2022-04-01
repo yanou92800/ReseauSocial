@@ -4,8 +4,8 @@ const sqlCreatePublication = (userId, content, attachment) => {
     return `INSERT INTO publications (userId, content, attachment) VALUES ("${userId}", "${content}", "${attachment}")`
 };
 
-const sqlUpdatePublication = (content, userId, id) => {
-    return `UPDATE publications SET content = "${content}", userId = "${userId}" WHERE id = "${id}"` // tester la sous requete
+const sqlUpdatePublication = (content, userId, attachment, id) => {
+    return `UPDATE publications SET content = "${content}", userId = "${userId}", attachment = "${attachment}" WHERE id = "${id}"` // tester la sous requete
 };
 
 const sqlGetOnePublication = (id) => {
@@ -72,22 +72,33 @@ exports.getOnePublication = (req, res, next) => {
   };
 
 exports.updatePublication = (req, res, next) => {
-
+  
+  let attachment = null;
+    if (req.file) {
+      attachment = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+    } 
+    if (req.body.content == "" && req.file == undefined) {
+      res.status(400).json({ error: "Il n'y a aucun contenu à ajouter !" });
+    }
+    else {
       const updatePublication = sqlUpdatePublication(
-          req.body.content,
-          req.body.userId,
-          req.params.id
+        req.body.content,
+        req.body.userId,
+        attachment,
+        req.params.id
       );
-
-          console.log(updatePublication),
-
       db.query(
-          updatePublication,
-          function(error) {
-              if (error) throw error;
-          }
-      )
-      res.status(201).json({ message: 'Publication modifiée !' })
+        updatePublication,
+        function(error, result) {
+            if (error) throw error;
+            console.log(error);
+            if (result) {
+                // console.log(result)
+            }
+            res.status(201).json(result)
+        }
+      ) 
+    }
 }
 
 exports.deletePublication = (req, res, next) => {

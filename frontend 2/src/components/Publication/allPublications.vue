@@ -6,9 +6,11 @@
 				<v-card v-for="(publication, index) in publicationList" :key="index" flat hover :to="{ name: 'onePublication', params: { id: publication.id } }">
 					<v-card class="my-10 mx-auto" align="center">
 						<v-list-item class="red" align="start" hover>
-							<v-list-item-avatar color="grey">
-								<v-img :src="publication.avatar"></v-img>
-							</v-list-item-avatar>
+							<router-link :to="`/profile/${publication.userId}`">
+								<v-list-item-avatar outlined color="grey darken-3">
+									<v-img :src="publication.avatar" alt="photo de profil"></v-img>
+								</v-list-item-avatar>
+							</router-link>
 							<v-list-item-content>
 								<v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
 								<v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>

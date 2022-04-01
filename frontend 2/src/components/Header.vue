@@ -21,7 +21,7 @@
     <span class="mr-5">Bienvenue {{ this.$store.state.username }}</span>
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn @click="myProfile" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de mon profile">
+        <v-btn @click="myProfile()" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de mon profile">
           <v-img :src="avatar" width="1vw" class="mx-2 rounded-lg"></v-img>
         </v-btn>
       </template>
@@ -30,7 +30,7 @@
 
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn class="mx-2" @click="logout" icon v-bind="attrs" v-on="on" aria-label="Se déconnecter">
+        <v-btn class="mx-2" @click="logout()" icon v-bind="attrs" v-on="on" aria-label="Se déconnecter">
           <v-icon>mdi-logout</v-icon>
         </v-btn>
       </template>

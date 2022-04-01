@@ -3,7 +3,7 @@
     <div class="container">
         <form @submit.prevent="onSubmit">
             <textarea v-model="v$.textareaCreateComment.$model" type="texte"></textarea>
-            <button :disabled="v$.textareaCreateComment.$invalid" @click.prevent="createComment">Commenter</button>
+            <button :disabled="v$.textareaCreateComment.$invalid" @click.prevent="createComment()">Commenter</button>
         </form>
         <div class="container-card">
             <div :key="index" v-for="(comment, index) in tableauComments" class="card">

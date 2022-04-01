@@ -3,7 +3,7 @@
     <div class="container">
         <form @submit.prevent="onSubmit">
             <textarea v-model="v$.textareaCreatePublication.$model" type="texte"></textarea>
-            <button :disabled="v$.textareaCreatePublication.$invalid" @click.prevent="createPublication">Publier</button>
+            <button :disabled="v$.textareaCreatePublication.$invalid" @click.prevent="createPublication()">Publier</button>
         </form>
         <div class="container-card">
             <div :key="index" v-for="(publication, index) in tableauPublications" class="card">

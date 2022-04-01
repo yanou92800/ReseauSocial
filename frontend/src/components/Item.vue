@@ -2,7 +2,7 @@
     <div class="card-text">
         <p>{{ publication }}</p>
         <p>{{ comment }}</p>
-        <button @click="deletePublication" class="item">X</button>
+        <button @click="deletePublication()" class="item">X</button>
     </div>
 </template>
 

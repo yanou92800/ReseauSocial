@@ -70,7 +70,7 @@
               </v-tooltip>
               <v-tooltip top v-else-if="isLiked">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" @click="deleteLike()" aria-label="Ne plus aimer cette publication">
+                  <v-btn icon v-bind="attrs" v-on="on" @click="deleteLike" aria-label="Ne plus aimer cette publication">
                     <v-icon size="1.5rem" color="yellow">mdi-thumb-up</v-icon>
                   </v-btn>
                 </template>
@@ -94,7 +94,7 @@
           <v-container>
             <v-card flat width="45vw">
               <div>
-                <v-form ref="form" v-model="valid" @submit.prevent="createComment()" v-on:getAllComments="mounted()">
+                <v-form ref="form" v-model="valid" @submit.prevent="createComment" v-on:getAllComments="mounted()">
                   <v-textarea id="postCom" outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
                   <div align="center">
                     <v-btn type="submit" small value="submit" color="red darken-2" dark :disabled="!valid">Poster</v-btn>
