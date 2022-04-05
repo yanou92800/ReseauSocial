@@ -33,7 +33,7 @@ exports.createPublication = (req, res, next) => {
       const createPublication = sqlCreatePublication(
         req.body.userId,
         req.body.content,
-        attachment
+        attachment,
       );
       db.query(
         createPublication,

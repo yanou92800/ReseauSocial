@@ -16,8 +16,8 @@ const sqlUpdateProfile = (email, username, password, id) => {
   return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}' WHERE id= '${id}'`
 };
 
-const sqlAddAdmin = (isAdmin, id) => {
-  return `UPDATE users SET isAdmin = '${isAdmin}' WHERE '${id}'`
+const sqlAddAdmin = (isAdmin, username) => {
+  return `UPDATE users SET isAdmin = '${isAdmin}' WHERE username = '${username}'`
 }
 
 const sqlDeleteProfile = (id) => {
@@ -144,7 +144,7 @@ exports.updateProfile = (req, res, next) => {
 exports.deleteProfile = (req, res, next) => {
 
   const deleteProfile = sqlDeleteProfile(
-      req.params.id
+      req.params.id,
   );
 
   db.query(
@@ -164,7 +164,8 @@ exports.deleteProfile = (req, res, next) => {
 exports.addAdmin = (req, res, next) => {
 
     const addAdmin = sqlAddAdmin(
-      req.params.id
+      req.body.isAdmin,
+      req.body.username
   );
   
   console.log(addAdmin);

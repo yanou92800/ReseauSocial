@@ -20,7 +20,7 @@
 						<v-row>
 							<v-col>
 								<v-card-text class="text-start">{{ publication.content }}</v-card-text>
-								<v-img contain max-height="300" :src="publication.attachment"></v-img>
+									<v-img v-if="publication.attachment != 'null'" contain max-height="300" :src="publication.attachment"></v-img>
 							</v-col>
 						</v-row>
 					</v-card>

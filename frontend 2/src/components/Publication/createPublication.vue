@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       content: "",
-      file: "",
+      file: null,
       imgPreview: "",
       contentRules: [
         (v) => (v && v.length >= 3) || "Veuillez ajouter une publication.",
@@ -39,10 +39,12 @@ export default {
     };
   },
   methods: {
+
     selectFile() {
       this.file = this.$refs.file.files[0];
       this.imgPreview = URL.createObjectURL(this.file);
     },
+
     createPublication(response) {
       console.log("localStorage" , response);
       const fd = new FormData();
@@ -64,6 +66,7 @@ export default {
             });
             this.content = "";
             this.imgPreview = "";
+            this.file = "";
           })
           .catch(() => {
             this.$store.dispatch("setSnackbar", {

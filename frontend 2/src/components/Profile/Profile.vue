@@ -5,10 +5,8 @@
         <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" class="mb-5" @click="addAdmin">Nommer modérateur</v-btn>
         <v-card>
           <v-list-item>
-            <v-list-item-content>
               <v-img :src="user.infos.avatar"></v-img>
               <v-list-item-title class="title" align="center">{{ user.infos.username }}</v-list-item-title>
-            </v-list-item-content>
           </v-list-item>
         </v-card>
       </v-col>
@@ -149,17 +147,17 @@ export default {
       }
     },
     addAdmin() {
-      const fd = new FormData();
-      fd.append("isAdmin", this.isAdmin);
 
       axios
         .put(
           "http://localhost:5000/api/addAdmin/" + this.$route.params.id,
-          fd,
           {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
             },
+            data: {
+              isAdmin: 2
+            }
           }
         )
         .then(() => {
