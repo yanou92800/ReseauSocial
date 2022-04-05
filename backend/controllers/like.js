@@ -14,6 +14,7 @@ const sqlGetAllLikes = (id) => {
 
 // Ajouter un like
 exports.addLike = (req, res) => {
+    
 	const addLike = sqlAddLike (
 		req.body.publicationId,
 		req.body.userId,

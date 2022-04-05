@@ -36,7 +36,7 @@ export default {
       },
       usernameRules: [
         (v) =>
-          (v && v.length >= 5) ||
+          (v && v.length >= 4) ||
           "Le nom d'utilisateur doit comprendre entre 5 et 30 caractères et peut contenir des tirets/espaces/apostrophes.",
       ],
       passwordRules: [

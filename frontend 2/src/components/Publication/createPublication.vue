@@ -3,9 +3,9 @@
     <v-card class="pa-5 mt-7">
       <v-card-title>Nouvelle publication</v-card-title>
       <v-form ref="form" enctype="multipart/form-data" @submit.prevent="createPublication">
-        <div class="mt-5">
+        <v-card-actions>
           <v-textarea filled v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
-        </div>
+        </v-card-actions>
         <div>
           <input type="file" ref="file" name="file" id="file" class="attachment" @change="selectFile"/>
           <label for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon> Ajouter une image</label>
@@ -52,7 +52,7 @@ export default {
 
       if (this.$refs.form.validate()) {
         axios
-          .post("http://localhost:5000/api/createPublication", fd, {
+          .post(`http://localhost:5000/api/createPublication`, fd, {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
             },

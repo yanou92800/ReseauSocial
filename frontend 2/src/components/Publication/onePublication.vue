@@ -11,6 +11,7 @@
             </router-link>
 
             <v-list-item-content>
+              <v-list-item-title class="admin font-weight-medium" v-if="publication.isAdmin == 1">ADMIN</v-list-item-title>
               <v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
               <v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
             </v-list-item-content>
@@ -25,7 +26,7 @@
 
           <v-card-actions align="center">
             <v-col>
-              <v-tooltip v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1">
+              <v-tooltip v-if="publication.userId == $store.state.userId">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="mr-5" v-bind="attrs" v-on="on" text small>
                     <router-link :to="`/updatePublication/${publication.id}`">
@@ -95,7 +96,7 @@
             <v-card flat width="45vw">
               <div>
                 <v-form ref="form" v-model="valid" @submit.prevent="createComment" v-on:getAllComments="mounted()">
-                  <v-textarea id="postCom" outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
+                  <v-textarea outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
                   <div align="center">
                     <v-btn type="submit" small value="submit" color="red darken-2" dark :disabled="!valid">Poster</v-btn>
                   </div>
@@ -142,6 +143,9 @@ export default {
           "Votre commentaire doit contenir au moins 3 caractères.",
       ],
     };
+  },
+  computed: {
+    ...mapState(["isAdmin", "userId"]),
   },
   created() {
     this.getLikes();
@@ -207,9 +211,6 @@ export default {
           console.log("id inconnu")
         }
       }
-    },
-    toBottom() {
-      this.$vuetify.goTo("#postCom");
     },
     deletePublication(publication) {
       this.dialog = false;
@@ -390,12 +391,11 @@ export default {
       }
     },
   },
-  computed: {
-    ...mapState(["isAdmin", "userId"]),
-  },
 };
 </script>
+
 <style scoped>
+
 a {
   text-decoration: none;
 }
@@ -403,4 +403,9 @@ a {
 .container {
   padding: 5vw 0vw 2vw 0vw;
 }
+
+.admin {
+  color: yellow;
+}
+
 </style>

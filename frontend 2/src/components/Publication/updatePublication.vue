@@ -1,37 +1,16 @@
 <template>
-  <v-container>
+  <v-container v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1">
     <v-card class="pa-10 mt-5">
-      <v-form
-        ref="form"
-        enctype="multipart/form-data"
-        @submit.prevent="updatePublication"
-        v-model="valid"
-      >
+      <v-form ref="form" enctype="multipart/form-data" @submit.prevent="updatePublication" v-model="valid">
         <h3 class="mb-5" align="center">Modifier votre message</h3>
 
         <div>
-          <input
-            type="file"
-            ref="file"
-            name="file"
-            id="file"
-            class="attachment"
-            @change="selectFile"
-          />
-          <label for="file"
-            ><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon>
-            Ajouter une image</label
-          >
+          <input type="file" ref="file" name="file" id="file" class="attachment" @change="selectFile"/>
+          <label for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon>Ajouter une image</label>
         </div>
 
         <div class="my-5">
-          <v-textarea
-            filled
-            v-model="content"
-            label="Ma publication"
-            type="text"
-            :rules="contentRules"
-          ></v-textarea>
+          <v-textarea filled v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
         </div>
         <div class="space">
           <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>
@@ -39,14 +18,7 @@
         </div>
 
         <div>
-          <v-btn
-            text
-            color="red accent-5"
-            type="submit"
-            value="submit"
-            :disabled="!valid"
-            >Poster</v-btn
-          >
+          <v-btn text color="red accent-5" type="submit" value="submit" :disabled="!valid">Poster</v-btn>
           <router-link :to="`/publication/`" >
             <v-btn text color="red accent-4">Annuler</v-btn>
           </router-link>
@@ -60,12 +32,14 @@
 import axios from "axios";
 import $store from "@/store/index";
 import { mapState } from "vuex";
+import { PublicationService } from "./publication.service"
 
 export default {
   name: "updatePublication",
   components: {},
   data() {
     return {
+      publication: {},
       valid: false,
       title: "",
       content: "",
@@ -76,7 +50,18 @@ export default {
       ],
     };
   },
-
+  computed: {
+    ...mapState(["isAdmin", "userId"]),
+  },
+  mounted() {
+    PublicationService.getOnePublication(this.$route.params.id, $store.state.token)
+    .then((publication) => {
+      this.publication = publication
+    })
+    .catch((error) => {
+      console.log(error);
+    });   
+  },
   methods: {
     selectFile() {
       this.file = this.$refs.file.files[0];
@@ -114,9 +99,6 @@ export default {
         });
       }
     },
-  },
-  computed: {
-    ...mapState(["isAdmin", "userId"]),
   },
 };
 </script>

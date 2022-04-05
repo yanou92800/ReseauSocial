@@ -16,6 +16,10 @@ const sqlUpdateProfile = (email, username, password, id) => {
   return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}' WHERE id= '${id}'`
 };
 
+const sqlAddAdmin = (isAdmin, id) => {
+  return `UPDATE users SET isAdmin = '${isAdmin}' WHERE '${id}'`
+}
+
 const sqlDeleteProfile = (id) => {
   return `DELETE FROM users WHERE id = '${id}'`
 };
@@ -75,7 +79,7 @@ exports.login = (req, res, next) => {
           cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString()
         );
         
-        //console.log(login)
+        console.log("Se connecter", login)
   
         db.query(
             login,
@@ -106,7 +110,8 @@ exports.login = (req, res, next) => {
                   })
                   .catch(error => res.status(500).json({ error }));
                 }
-            })
+            }
+        )
     }
   )
 }
@@ -135,6 +140,44 @@ exports.updateProfile = (req, res, next) => {
       res.status(201).json({ message: 'Modification confirmée' })
     })
   };
+
+exports.deleteProfile = (req, res, next) => {
+
+  const deleteProfile = sqlDeleteProfile(
+      req.params.id
+  );
+
+  db.query(
+    deleteProfile,
+    function(error, result) {
+      if (error) throw error;
+      if (result) {
+        //console.log(result)
+        }
+      res.status(200).json({
+        message: 'Compte supprimé',
+      })
+    }
+  )
+};
+
+exports.addAdmin = (req, res, next) => {
+
+    const addAdmin = sqlAddAdmin(
+      req.params.id
+  );
+  
+  console.log(addAdmin);
+  
+  db.query(
+          addAdmin,
+          function(error) {
+              if (error) throw error;
+          },
+          //console.log(addAdmin)
+  )
+  res.status(201).json({ message: 'Admin ajouté' })
+};
 
 exports.deleteProfile = (req, res, next) => {
 

@@ -2,8 +2,9 @@
   <v-app class="blue">
     <v-row class="my-10">
       <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" class="mb-5" @click="addAdmin">Nommer modérateur</v-btn>
         <v-card>
-          <v-list-item color="blue">
+          <v-list-item>
             <v-list-item-content>
               <v-img :src="user.infos.avatar"></v-img>
               <v-list-item-title class="title" align="center">{{ user.infos.username }}</v-list-item-title>
@@ -20,19 +21,19 @@
           </v-form>
         </v-card-text>
       </v-col>
-      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1">
+      <v-col md="8" cols="8" class="mx-auto">
         <v-form ref="form" @submit.prevent="updateProfile">
-          <v-card>
-            <div class="my-5">
-              <input type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"/>
-              <label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon>Changer d'avatar</label>
-            </div>
-            <div class="space">
-              <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>
-              <img contain height="400" v-if="imgPreview" :src="user.imgPreview" />
-            </div>
+          <v-card elevation="5">
             <v-card-actions>
-              <v-btn type="submit" color="success" dark aria-label="Sauvegarder" @click="updateProfile">
+              <v-input type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"/>
+              <v-label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-label>
+            </v-card-actions>
+            <v-card-actions>
+              <v-label v-if="imgPreview" for="preview">Aperçu de l'image:</v-label>
+              <v-img contain height="400" v-if="imgPreview" :src="user.imgPreview" />
+            </v-card-actions>
+            <v-card-actions>
+              <v-btn type="submit" color="success" dark aria-label="Sauvegarder" @click="updateProfile" v-if="user.infos.id == $store.state.userId">
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
               <v-btn @click.stop="dialog = true" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon>mdi-delete</v-icon></v-btn>
@@ -75,7 +76,7 @@ export default {
       },
       usernameRules: [
         (v) =>
-          (v && v.length >= 5) ||
+          (v && v.length >= 4) ||
           "Le nom d'utilisateur doit comprendre entre 5 et 30 caractères et peut contenir des tirets/espaces/apostrophes.",
       ],
       passwordRules: [
@@ -147,6 +148,31 @@ export default {
         });
       }
     },
+    addAdmin() {
+      const fd = new FormData();
+      fd.append("isAdmin", this.isAdmin);
+
+      axios
+        .put(
+          "http://localhost:5000/api/addAdmin/" + this.$route.params.id,
+          fd,
+          {
+            headers: {
+              Authorization: `Bearer ${$store.state.token}`,
+            },
+          }
+        )
+        .then(() => {
+          this.$store.dispatch("setSnackbar", {
+            text: "Modérateur ajouté",
+          });
+          this.$router.go();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     deleteProfile() {
       this.dialog = false;
       axios
@@ -171,7 +197,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["userId"]),
+    ...mapState(["userId", "admin"]),
   },
 };
 </script>

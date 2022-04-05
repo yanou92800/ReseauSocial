@@ -9,7 +9,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="#000000" dark @click="login()">Connexion</v-btn>
+      <v-btn color="#000000" dark @click="login">Connexion</v-btn>
       <v-spacer />
     </v-card-actions>
   </v-card>

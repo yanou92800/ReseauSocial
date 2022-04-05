@@ -12,6 +12,7 @@
 								</v-list-item-avatar>
 							</router-link>
 							<v-list-item-content>
+								<v-list-item-title class="admin font-weight-medium" v-if="publication.isAdmin == 1">ADMIN</v-list-item-title>
 								<v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
 								<v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
 							</v-list-item-content>
@@ -82,6 +83,10 @@ export default {
 
 .container {
 	width: 60vw;
+}
+
+.admin {
+	color: yellow;
 }
 
 </style>

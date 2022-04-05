@@ -22,7 +22,7 @@
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
         <v-btn @click="myProfile" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de mon profile">
-          <v-img :src="avatar" width="1vw" class="mx-2 rounded-lg"></v-img>
+					<v-img :src="avatar" width="1vw"></v-img>
         </v-btn>
       </template>
       <span>Mon profil</span>

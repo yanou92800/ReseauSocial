@@ -4,12 +4,12 @@ const sqlCreatePublication = (userId, content, attachment) => {
     return `INSERT INTO publications (userId, content, attachment) VALUES ("${userId}", "${content}", "${attachment}")`
 };
 
-const sqlUpdatePublication = (content, userId, attachment, id) => {
-    return `UPDATE publications SET content = "${content}", userId = "${userId}", attachment = "${attachment}" WHERE id = "${id}"` // tester la sous requete
+const sqlUpdatePublication = (userId, content, attachment, id) => {
+    return `UPDATE publications SET userId = "${userId}", content = "${content}", attachment = "${attachment}" WHERE id = "${id}"` // tester la sous requete
 };
 
 const sqlGetOnePublication = (id) => {
-    return `SELECT publications.*, users.username, users.avatar FROM publications JOIN users ON publications.userId = users.id WHERE publications.id = ${id}`
+    return `SELECT publications.*, users.username, users.avatar, users.isAdmin FROM publications JOIN users ON publications.userId = users.id WHERE publications.id = ${id}`
   };
 
 const sqlDeletePublication = (id) => {
@@ -17,7 +17,7 @@ const sqlDeletePublication = (id) => {
 };
 
 const sqlGetAllPublications = () => {
-    return `SELECT publications.*, users.username, users.avatar FROM publications JOIN users ON publications.userId = users.id ORDER BY createdAt DESC`
+    return `SELECT publications.*, users.username, users.avatar, users.isAdmin FROM publications JOIN users ON publications.userId = users.id ORDER BY createdAt DESC`
   };
 
 exports.createPublication = (req, res, next) => {
@@ -80,8 +80,8 @@ exports.updatePublication = (req, res, next) => {
     }
     else {
       const updatePublication = sqlUpdatePublication(
-        req.body.content,
         req.body.userId,
+        req.body.content,
         attachment,
         req.params.id
       );
@@ -101,7 +101,7 @@ exports.updatePublication = (req, res, next) => {
 
 exports.deletePublication = (req, res, next) => {
 
-    // console.log("ID", req.params)
+    console.log("ID", req.params)
 
     const deletePublication = sqlDeletePublication(
       req.params.id
