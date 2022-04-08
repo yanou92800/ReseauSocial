@@ -3,12 +3,10 @@
     <v-card class="pa-10 mt-5">
       <v-form ref="form" enctype="multipart/form-data" @submit.prevent="updatePublication" v-model="valid">
         <h3 class="mb-5" align="center">Modifier votre message</h3>
-
         <div>
           <input type="file" ref="file" name="file" id="file" class="attachment" @change="selectFile"/>
           <label for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon>Ajouter une image</label>
         </div>
-
         <div class="my-5">
           <v-textarea filled v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
         </div>
@@ -16,7 +14,6 @@
           <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>
           <img contain height="100" v-if="imgPreview" :src="imgPreview" />
         </div>
-
         <div>
           <v-btn text color="red accent-5" type="submit" value="submit" :disabled="!valid">Poster</v-btn>
           <router-link :to="`/publication/`" >

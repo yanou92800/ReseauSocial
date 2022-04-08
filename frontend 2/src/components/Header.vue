@@ -18,11 +18,11 @@
     </v-tooltip>
 
     <v-spacer></v-spacer>
-    <span class="mr-5">Bienvenue {{ username }}</span>
+    <span class="mr-5">Bienvenue {{ user.infos.username }}</span>
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn @click="myProfile" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de mon profile">
-					<v-img :src="avatar" width="1vw"></v-img>
+        <v-btn @click="myProfile" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de mon profil">
+					<v-img :src="user.infos.avatar" width="1vw"></v-img>
         </v-btn>
       </template>
       <span>Mon profil</span>
@@ -41,10 +41,35 @@
 
 <script>
 import { mapState } from 'vuex'
+import axios from "axios";
+import $store from "@/store/index";
+
 export default {
   name: "Header",
+  data() {
+    return {
+      user: {
+        infos: {},
+      },
+    }
+  },
   computed:{
-    ...mapState(['isLogged', "avatar", "username"])
+    ...mapState(['isLogged'])
+  },
+  mounted() {
+    axios
+      .get("http://localhost:5000/api/infos/" + this.$store.state.userId, {
+        headers: {
+          Authorization: `Bearer ${$store.state.token}`,
+        },
+      })
+      .then((response) => {
+        //console.log(response);
+        this.user = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   methods: {
     logout() {
@@ -52,10 +77,10 @@ export default {
       this.$router.push("/");
     },
     myProfile() {
-      if (this.$route.path == `/profile/${this.$store.state.userId}`) {
+      if (this.$route.path == `/Profile/${this.$store.state.userId}`) {
         window.location.reload();
       } else {
-        this.$router.push(`/profile/${this.$store.state.userId}`);
+        this.$router.push(`/Profile/${this.$store.state.userId}`);
       }
     },
   },

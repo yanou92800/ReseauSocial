@@ -3,62 +3,58 @@
     <v-col class="my-10">
       <v-col md="4" sm="6" cols="8" class="mx-auto">
         <v-row class="mx-auto" align="center" justify="center">
-          <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" class="mb-5" @click="addAdmin">Nommer modérateur</v-btn>
-          <v-btn v-if="$store.state.isAdmin != 0 && user.infos.isAdmin != 0 && user.infos.isAdmin != 1" class="mb-5" @click="removeAdmin">Enlever modérateur</v-btn>
+          <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" @click="addAdmin">Nommer modérateur</v-btn>
+          <v-btn v-if="$store.state.isAdmin != 0 && user.infos.isAdmin != 0 && user.infos.isAdmin != 1" @click="removeAdmin">Enlever modérateur</v-btn>
         </v-row>
       </v-col>
       <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-list-item>
+          <v-list-item-title class="title" align="center">{{ user.infos.username }}</v-list-item-title>
+        </v-list-item>
         <v-card>
           <v-img :src="user.infos.avatar"></v-img>
-          <v-list-item>
-              <v-list-item-title class="title" align="center">{{ user.infos.username }}</v-list-item-title>
-          </v-list-item>
         </v-card>
       </v-col>
-      <v-col md="8" cols="8" class="mx-auto">
-        <v-form ref="form" @submit.prevent="updateProfile">
-          <v-card elevation="5">
-            <v-card>
-              <v-btn type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"></v-btn>
-              <v-label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-label>
-            </v-card>
-            <v-card-actions>
-              <v-label v-if="imgPreview" for="preview">Aperçu de l'image:</v-label>
-              <v-img contain height="400" v-if="imgPreview" :src="user.imgPreview" />
-            </v-card-actions>
-            <v-card-actions>
-              <v-btn type="submit" color="success" dark aria-label="Sauvegarder" @click="updateProfile" v-if="user.infos.id == $store.state.userId">
-                <v-icon>mdi-content-save</v-icon>
-              </v-btn>
-              <v-btn @click.stop="dialog = true" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon>mdi-delete</v-icon></v-btn>
-              <v-dialog v-model="dialog" max-width="500">
-                <v-card>
-                  <v-card-title v-if="user.infos.id == $store.state.userId">Êtes vous sûr de vouloir supprimer votre profil ?</v-card-title>
-                  <v-card-title v-else>Êtes vous sûr de vouloir supprimer son profil ?</v-card-title>
-                  <v-card-actions @click="dialog = false">
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text>Non</v-btn>
-                  <v-btn color="red darken-3" text @click="deleteProfile" v-if="user.infos.id == $store.state.userId">Oui, je veux supprimer mon compte.</v-btn>
-                  <v-btn color="red darken-3" text @click="deleteProfile" v-else>Oui, je veux supprimer son compte.</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
+      <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-row class="mx-auto" align="center" justify="center">
+          <v-btn type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"></v-btn>
+          <v-btn for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-btn>
+          <v-card-actions>
+            <v-label v-if="imgPreview" for="preview">Aperçu de l'image:</v-label>
+            <v-img contain height="400" v-if="imgPreview" :src="user.imgPreview" />
+          </v-card-actions>
+        </v-row>
+      </v-col>
+      <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-row class="mx-auto" align="center" justify="center">
+          <router-link :to="`/updateProfile/${$store.state.userId}`" class="text-decoration-none">
+            <v-btn>Modifier profil</v-btn>
+          </router-link>
+        </v-row>
+      </v-col>
+      <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-row class="mx-auto" align="center" justify="center">
+          <v-card style="padding: 1vw 6vw">
+            <v-btn style="padding: 3vw 7vw" @click.stop="dialog = true" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon style="font-size: 5vw">mdi-delete</v-icon></v-btn>
+          </v-card>
+        </v-row>
+        <v-dialog v-model="dialog" max-width="500">
+          <v-card>
+            <v-card-title v-if="user.infos.id == $store.state.userId">Êtes vous sûr de vouloir supprimer votre profil ?</v-card-title>
+            <v-card-title v-else>Êtes vous sûr de vouloir supprimer son profil ?</v-card-title>
+            <v-card-actions @click="dialog = false">
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text>Non</v-btn>
+              <v-btn color="red darken-3" text @click="deleteProfile" v-if="user.infos.id == $store.state.userId">Oui, je veux supprimer mon compte.</v-btn>
+              <v-btn color="red darken-3" text @click="deleteProfile" v-else>Oui, je veux supprimer son compte.</v-btn>
             </v-card-actions>
           </v-card>
-        </v-form>
-      </v-col>
-      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId">
-        <v-card-text>
-          <v-form v-model="valid" ref="form">
-            <v-text-field v-model="userUpdateInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
-            <v-text-field v-model="userUpdateInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
-            <v-text-field v-model="userUpdateInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
-          </v-form>
-        </v-card-text>
+        </v-dialog>
       </v-col>
     </v-col>
   </v-app>
 </template>
+
 <script>
 import axios from "axios";
 import $store from "@/store/index";
@@ -75,7 +71,8 @@ export default {
       userUpdateInfo: {
         username: "",
         email: "",
-        password: ""
+        password: "",
+        avatar: ""
       },
       usernameRules: [
         (v) =>
@@ -124,26 +121,26 @@ export default {
       this.imgPreview = URL.createObjectURL(this.file);
     },
     updateProfile() {
-      const fd = new FormData();
-      fd.append("email", this.email);
-      fd.append("username", this.username);
-      fd.append("avatar", this.file);
-
       if (this.$refs.form.validate()) {
       axios
-        .put("http://localhost:5000/api/updateProfil/" + this.$route.params.id, fd, {
+        .put("http://localhost:5000/api/updateProfile/" + this.$route.params.id, this.userUpdateInfo, {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
             },
         })
         .then(() => {
           this.$store.dispatch("setSnackbar", {
+            showing: true,
             text: "Votre profil a été modifié.",
           });
           this.$router.go();
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+            this.$store.dispatch("setSnackbar", {
+              color: "error",
+              showing: true,
+              text: `l'adresse mail est déjà prise`,
+            });
         });
       }
     },
@@ -185,7 +182,7 @@ export default {
       this.dialog = false;
       axios
         .delete(
-          "http://localhost:5000/api/deleteProfil/" + this.$route.params.id,
+          "http://localhost:5000/api/deleteProfile/" + this.$route.params.id,
           {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
@@ -226,6 +223,10 @@ export default {
 .avatar:focus + label,
 .avatar + label:hover {
   background-color: #effbff;
+}
+
+.title {
+    font-size: 2rem !important;
 }
 
 </style>

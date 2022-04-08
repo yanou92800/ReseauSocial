@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card class="mx-auto" align="center" min-width="40vw" max-width="70vw">
           <v-list-item class="red" align="start" hover>
-            <router-link :to="`/profile/${publication.userId}`">
+            <router-link :to="`/Profile/${publication.userId}`">
               <v-list-item-avatar outlined color="grey darken-3">
                 <v-img :src="publication.avatar" alt="photo de profil"></v-img>
               </v-list-item-avatar>

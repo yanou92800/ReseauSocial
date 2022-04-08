@@ -5,8 +5,8 @@ import Register from "../components/Auth/Register.vue";
 import allPublications from "../components/Publication/allPublications.vue";
 import onePublication from "../components/Publication/onePublication.vue";
 import updatePublication from "../components/Publication/updatePublication.vue";
-
 import Profile from "../components/Profile/Profile.vue";
+import updateProfile from "../components/Profile/updateProfile.vue";
 
 Vue.use(VueRouter);
 
@@ -17,14 +17,19 @@ const routes = [
 		component: Home,
 	},
 	{
-		path: "/register",
+		path: "/Register",
 		name: "Register",
 		component: Register,
 	},
 	{
-		path: "/profile/:id",
+		path: "/Profile/:id",
 		name: "Profile",
 		component: Profile,
+	},
+	{
+		path: "/updateProfile/:id",
+		name: "updateProfile",
+		component: updateProfile,
 	},
 	{
 		path: "/allPublications",
