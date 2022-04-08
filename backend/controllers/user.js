@@ -12,8 +12,8 @@ const sqlLogin = (email) => {
   return `SELECT * FROM users WHERE email = '${email}'`
 };
 
-const sqlUpdateProfile = (email, username, password, id) => {
-  return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}' WHERE id= '${id}'`
+const sqlUpdateProfile = (email, username, password, avatar, id) => {
+  return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}', avatar = '${avatar}' WHERE id= '${id}'`
 };
 
 const sqlAdmin = (isAdmin, id) => {
@@ -147,7 +147,13 @@ exports.getUserInfos = (req, res, next) => {
 };
 
 exports.updateProfile = (req, res, next) => {
-  bcrypt.hash(req.body.password, 10, function(err, hash) {
+
+  if (req.file) {
+    console.log("AVATAR", req.file.filename)
+    avatar = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  } 
+  else {
+    bcrypt.hash(req.body.password, 10, function(err, hash) {
     
     if (err) throw err;
     
@@ -155,6 +161,7 @@ exports.updateProfile = (req, res, next) => {
       cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString(),
       req.body.username,
       hash,
+      avatar,
       req.params.id
   );
   
@@ -169,6 +176,7 @@ exports.updateProfile = (req, res, next) => {
       )
       res.status(201).json({ message: 'Modification confirmée' })
     })
+  }
   };
 
 exports.deleteProfile = (req, res, next) => {

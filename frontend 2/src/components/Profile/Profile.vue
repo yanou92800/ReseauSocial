@@ -1,9 +1,13 @@
 <template>
-  <v-app class="blue">
-    <v-row class="my-10">
+  <v-app>
+    <v-col class="my-10">
       <v-col md="4" sm="6" cols="8" class="mx-auto">
-        <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" class="mb-5" @click="addAdmin">Nommer modérateur</v-btn>
-        <v-btn v-if="$store.state.isAdmin != 0 && user.infos.isAdmin != 0 && user.infos.isAdmin != 1" class="mb-5" @click="removeAdmin">Enlever modérateur</v-btn>
+        <v-row class="mx-auto" align="center" justify="center">
+          <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" class="mb-5" @click="addAdmin">Nommer modérateur</v-btn>
+          <v-btn v-if="$store.state.isAdmin != 0 && user.infos.isAdmin != 0 && user.infos.isAdmin != 1" class="mb-5" @click="removeAdmin">Enlever modérateur</v-btn>
+        </v-row>
+      </v-col>
+      <v-col md="4" sm="6" cols="8" class="mx-auto">
         <v-card>
           <v-img :src="user.infos.avatar"></v-img>
           <v-list-item>
@@ -11,20 +15,11 @@
           </v-list-item>
         </v-card>
       </v-col>
-      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId">
-        <v-card-text>
-          <v-form v-model="valid" ref="form">
-            <v-text-field v-model="userUpdateInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
-            <v-text-field v-model="userUpdateInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
-            <v-text-field v-model="userUpdateInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
-          </v-form>
-        </v-card-text>
-      </v-col>
       <v-col md="8" cols="8" class="mx-auto">
         <v-form ref="form" @submit.prevent="updateProfile">
           <v-card elevation="5">
             <v-card>
-              <v-input type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"/>
+              <v-btn type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"></v-btn>
               <v-label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-label>
             </v-card>
             <v-card-actions>
@@ -52,7 +47,16 @@
           </v-card>
         </v-form>
       </v-col>
-    </v-row>
+      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId">
+        <v-card-text>
+          <v-form v-model="valid" ref="form">
+            <v-text-field v-model="userUpdateInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
+            <v-text-field v-model="userUpdateInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
+            <v-text-field v-model="userUpdateInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
+          </v-form>
+        </v-card-text>
+      </v-col>
+    </v-col>
   </v-app>
 </template>
 <script>
@@ -129,7 +133,7 @@ export default {
       axios
         .put("http://localhost:5000/api/updateProfil/" + this.$route.params.id, fd, {
             headers: {
-              Authorization: `Bearer '${$store.state.token}'`,
+              Authorization: `Bearer ${$store.state.token}`,
             },
         })
         .then(() => {
