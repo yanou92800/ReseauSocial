@@ -168,6 +168,35 @@ export default {
 			});
 	},
   methods: {
+    deletePublication(publication) {
+      this.dialog = false;
+      axios
+        .delete(
+          "http://localhost:5000/api/deletePublication/" + this.$route.params.id,
+          {
+            headers: {
+              Authorization: `Bearer ${$store.state.token}`,
+            },
+            data: {
+              userId: publication.userId
+            },
+          }
+        )
+        .then(() => {
+          this.$store.dispatch("setSnackbar", {
+            text: "Votre publication a été supprimé.",
+          });
+          this.$router.push({
+            name: "allPublications",
+          });
+        })
+        .catch(() => {
+          this.$store.dispatch("setSnackbar", {
+            color: "error",
+            text: "Impossible de supprimer le publication.",
+          });
+        });
+    },
     deleteLike() {
       console.log("DELETE", this.isLiked)
       if (this.isLiked == 1) {
@@ -211,35 +240,6 @@ export default {
           console.log("id inconnu")
         }
       }
-    },
-    deletePublication(publication) {
-      this.dialog = false;
-      axios
-        .delete(
-          "http://localhost:5000/api/deletePublication/" + this.$route.params.id,
-          {
-            headers: {
-              Authorization: `Bearer ${$store.state.token}`,
-            },
-            data: {
-              userId: publication.userId
-            },
-          }
-        )
-        .then(() => {
-          this.$store.dispatch("setSnackbar", {
-            text: "Votre publication a été supprimé.",
-          });
-          this.$router.push({
-            name: "allPublications",
-          });
-        })
-        .catch(() => {
-          this.$store.dispatch("setSnackbar", {
-            color: "error",
-            text: "Impossible de supprimer le publication.",
-          });
-        });
     },
     createComment() {
       console.log($store.state)

@@ -3,9 +3,10 @@
     <v-row class="my-10">
       <v-col md="4" sm="6" cols="8" class="mx-auto">
         <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" class="mb-5" @click="addAdmin">Nommer modérateur</v-btn>
+        <v-btn v-if="$store.state.isAdmin != 0 && user.infos.isAdmin != 0 && user.infos.isAdmin != 1" class="mb-5" @click="removeAdmin">Enlever modérateur</v-btn>
         <v-card>
+          <v-img :src="user.infos.avatar"></v-img>
           <v-list-item>
-              <v-img :src="user.infos.avatar"></v-img>
               <v-list-item-title class="title" align="center">{{ user.infos.username }}</v-list-item-title>
           </v-list-item>
         </v-card>
@@ -13,19 +14,19 @@
       <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId">
         <v-card-text>
           <v-form v-model="valid" ref="form">
-            <v-text-field v-model="userInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
-            <v-text-field v-model="userInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
-            <v-text-field v-model="userInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
+            <v-text-field v-model="userUpdateInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
+            <v-text-field v-model="userUpdateInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
+            <v-text-field v-model="userUpdateInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
           </v-form>
         </v-card-text>
       </v-col>
       <v-col md="8" cols="8" class="mx-auto">
         <v-form ref="form" @submit.prevent="updateProfile">
           <v-card elevation="5">
-            <v-card-actions>
+            <v-card>
               <v-input type="file" ref="file" name="file" id="file" class="avatar" @change="selectFile"/>
               <v-label for="file"><v-icon color="blue darken-2" class="ml-5" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-label>
-            </v-card-actions>
+            </v-card>
             <v-card-actions>
               <v-label v-if="imgPreview" for="preview">Aperçu de l'image:</v-label>
               <v-img contain height="400" v-if="imgPreview" :src="user.imgPreview" />
@@ -67,7 +68,7 @@ export default {
       user: {
         infos: {},
       },
-      userInfo: {
+      userUpdateInfo: {
         username: "",
         email: "",
         password: ""
@@ -126,15 +127,11 @@ export default {
 
       if (this.$refs.form.validate()) {
       axios
-        .put(
-          "http://localhost:5000/api/updateProfil/" + this.$route.params.id,
-          fd,
-          {
+        .put("http://localhost:5000/api/updateProfil/" + this.$route.params.id, fd, {
             headers: {
-              Authorization: `Bearer ${$store.state.token}`,
+              Authorization: `Bearer '${$store.state.token}'`,
             },
-          }
-        )
+        })
         .then(() => {
           this.$store.dispatch("setSnackbar", {
             text: "Votre profil a été modifié.",
@@ -147,19 +144,12 @@ export default {
       }
     },
     addAdmin() {
-
       axios
-        .put(
-          "http://localhost:5000/api/addAdmin/" + this.$route.params.id,
-          {
-            headers: {
-              Authorization: `Bearer ${$store.state.token}`,
-            },
-            data: {
-              isAdmin: 2
-            }
+        .put("http://localhost:5000/api/addAdmin/" + this.$route.params.id, {}, {
+          headers: {
+            Authorization: `Bearer ${$store.state.token}`
           }
-        )
+        })
         .then(() => {
           this.$store.dispatch("setSnackbar", {
             text: "Modérateur ajouté",
@@ -170,7 +160,23 @@ export default {
           console.log(error);
         });
     },
-
+    removeAdmin() {
+      axios
+        .put("http://localhost:5000/api/removeAdmin/" + this.$route.params.id, {}, {
+          headers: {
+            Authorization: `Bearer ${$store.state.token}`
+          }
+        })
+        .then(() => {
+          this.$store.dispatch("setSnackbar", {
+            text: "Modérateur enlevé",
+          });
+          this.$router.go();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     deleteProfile() {
       this.dialog = false;
       axios

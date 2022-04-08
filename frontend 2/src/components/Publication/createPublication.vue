@@ -4,10 +4,10 @@
       <v-card-title>Nouvelle publication</v-card-title>
       <v-form ref="form" enctype="multipart/form-data" @submit.prevent="createPublication">
         <v-card-actions>
-          <v-textarea filled v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
+          <v-textarea v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
         </v-card-actions>
         <div>
-          <input type="file" ref="file" name="file" id="file" class="attachment" @change="selectFile"/>
+          <input type="file" ref="file" name="file" id="file" class="file" @change="selectFile"/>
           <label for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon> Ajouter une image</label>
         </div>
         <div>
@@ -81,20 +81,20 @@ export default {
 </script>
 
 <style scoped>
-.attachment {
+.file {
   opacity: 0;
   overflow: hidden;
   position: absolute;
   z-index: -1;
 }
-.attachment + label {
+.file + label {
   font-weight: 500;
   display: inline-block;
   cursor: pointer;
 }
 
-.attachment:focus + label,
-.attachment + label:hover {
+.file:focus + label,
+.file + label:hover {
   background-color: #effbff;
 }
 </style>

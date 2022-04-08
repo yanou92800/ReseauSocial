@@ -77,7 +77,7 @@ export default {
         axios
           .put(
             "http://localhost:5000/api/updatePublication/" +
-              this.$route.params.id,
+            this.$route.params.id,
             fd,
             {
               headers: {

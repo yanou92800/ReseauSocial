@@ -16,8 +16,8 @@ const sqlUpdateProfile = (email, username, password, id) => {
   return `UPDATE users SET email = '${email}', username = '${username}', password = '${password}' WHERE id= '${id}'`
 };
 
-const sqlAddAdmin = (isAdmin, username) => {
-  return `UPDATE users SET isAdmin = '${isAdmin}' WHERE username = '${username}'`
+const sqlAdmin = (isAdmin, id) => {
+  return `UPDATE users SET isAdmin = '${isAdmin}' WHERE id = '${id}'`
 }
 
 const sqlDeleteProfile = (id) => {
@@ -116,6 +116,36 @@ exports.login = (req, res, next) => {
   )
 }
 
+exports.getUserInfos = (req, res, next) => {
+  
+  const getUserInfos = sqlGetUserInfos(
+    req.params.id
+  );
+
+  //console.log(getUserInfos)
+  
+  db.query(
+    getUserInfos,
+    function(error, result) {
+      if (error) throw error;
+      if (result) {
+        console.log(result)
+        }
+      res.status(200).json({
+        message: 'Acces au profil',
+        infos: {
+          username: result[0].username,
+          avatar: result[0].avatar,
+          email: result[0].email,
+          password: result[0].password,
+          isAdmin: result[0].isAdmin,
+          id: result[0].id
+        }
+      })
+    }
+  )
+};
+
 exports.updateProfile = (req, res, next) => {
   bcrypt.hash(req.body.password, 10, function(err, hash) {
     
@@ -163,21 +193,40 @@ exports.deleteProfile = (req, res, next) => {
 
 exports.addAdmin = (req, res, next) => {
 
-    const addAdmin = sqlAddAdmin(
-      req.body.isAdmin,
-      req.body.username
+  const addAdmin = sqlAdmin(
+    req.body.isAdmin = 2,
+    req.params.id
   );
   
-  console.log(addAdmin);
+  console.log("Author controller", addAdmin);
   
   db.query(
-          addAdmin,
-          function(error) {
-              if (error) throw error;
-          },
-          //console.log(addAdmin)
+    addAdmin,
+    function(error) {
+      if (error) throw error;
+    },
+    //console.log(addAdmin)
   )
-  res.status(201).json({ message: 'Admin ajouté' })
+  res.status(201).json({ message: 'Modérateur ajouté' })
+};
+
+exports.removeAdmin = (req, res, next) => {
+
+  const removeAdmin = sqlAdmin(
+    req.body.isAdmin = 0,
+    req.params.id
+  );
+  
+  console.log("Author controller", removeAdmin);
+  
+  db.query(
+    removeAdmin,
+    function(error) {
+      if (error) throw error;
+    },
+    //console.log(removeAdmin)
+  )
+  res.status(201).json({ message: 'Modérateur enlevé' })
 };
 
 exports.deleteProfile = (req, res, next) => {
@@ -195,36 +244,6 @@ exports.deleteProfile = (req, res, next) => {
         }
       res.status(200).json({
         message: 'Compte supprimé',
-      })
-    }
-  )
-};
-
-exports.getUserInfos = (req, res, next) => {
-  
-  const getUserInfos = sqlGetUserInfos(
-    req.params.id
-  );
-
-  //console.log(getUserInfos)
-  
-  db.query(
-    getUserInfos,
-    function(error, result) {
-      if (error) throw error;
-      if (result) {
-        console.log(result)
-        }
-      res.status(200).json({
-        message: 'Acces au profil',
-        infos: {
-          username: result[0].username,
-          avatar: result[0].avatar,
-          email: result[0].email,
-          password: result[0].password,
-          isAdmin: result[0].isAdmin,
-          id: result[0].id
-        }
       })
     }
   )
