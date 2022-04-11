@@ -74,7 +74,7 @@ export default {
             this.$store.dispatch("setSnackbar", {
               color: "error",
               showing: true,
-              text: `L'adresse email est déjà prise`,
+              text: `Username ou Email déjà pris`,
             });
           });
       }

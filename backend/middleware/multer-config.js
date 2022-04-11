@@ -19,4 +19,4 @@ const storage = multer.diskStorage({ // enregistrer les fichiers entrants :
   }
 });
 
-module.exports = multer({storage: storage}).single('avatar');
+module.exports = multer({storage: storage}).single('inputFile');

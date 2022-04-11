@@ -18,7 +18,11 @@ const sqlUpdateProfile = (email, username, password, id) => {
 
 const sqlAdmin = (isAdmin, id) => {
   return `UPDATE users SET isAdmin = '${isAdmin}' WHERE id = '${id}'`
-}
+};
+
+const sqlUpdateAvatar = (avatar, id) => {
+  return `UPDATE users SET avatar = "${avatar}" WHERE id = "${id}"` // tester la sous requete
+};
 
 const sqlDeleteProfile = (id) => {
   return `DELETE FROM users WHERE id = '${id}'`
@@ -37,26 +41,27 @@ exports.signup = (req, res, next) => {
 
   bcrypt.hash(req.body.password, 10, function(err, hash) {
 
-      if (err) throw err;
+    if (err) throw err;
 
-      const signup = sqlSignup (
-          cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString(),
-          req.body.username,
-          hash,
-      );
-
-      //console.log(signup)
-
-       db.query(
-         signup, 
-         function (err) {
-           if (err) throw err;
+    const signup = sqlSignup (
+      cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString(),
+      req.body.username,
+      hash,
+    );
+    
+    db.query(
+      signup, 
+      function(err) {
+        if (err) {
+          return res.status(401).json(err);
+        };
+        return res.json({ 
+          message: 'Enregistrement confirmé!',
+          username: req.body.username
         });
-
-      res.status(201).json({ 
-        message: "Enregistrement confirmé",
-        username: req.body.username })
-    });
+      }
+    );
+  })
 };
 
 //se connecter
@@ -69,51 +74,79 @@ exports.login = (req, res, next) => {
   db.query(
     checkEmail,
     (err, result) => {
-        if (err) res.status(500).json({ error: "erreur serveur" });
-        console.log(result)
-        if (result.length == 0) {
-            return res.status(401).json({ message: "Utilisateur non trouvé." });
-        }
+      if (err) res.status(500).json({ error: "erreur serveur" });
+      console.log(result)
+      if (result.length == 0) {
+        return res.status(401).json({ message: "Utilisateur non trouvé." });
+      }
         
-        const login = sqlLogin (
-          cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString()
-        );
+      const login = sqlLogin (
+        cryptojs.HmacSHA512(req.body.email, process.env.MAIL_SECRET_KEY).toString()
+      );
         
-        console.log("Se connecter", login)
+      console.log("Se connecter", login)
   
-        db.query(
-            login,
-            req.body.email,
-            (err, result) => {
-                if (err) throw err;
-                if (result.length == 0) {
-                    return res.status(401).json({ message: 'Veuillez entrer un mot de passe.' })
-                }
-                if (result) {
-                  bcrypt.compare(req.body.password, result[0].password)
-                  .then(valid => {
-                      if (!valid) {
-                          return res.status(401).json({ message: 'Mot de passe incorrect.' })
-                      };
-                      res.status(200).json({
-                        avatar: result[0].avatar,
-                        id: result[0].id,
-                        username: result[0].username,
-                        email: result[0].email,
-                        token: jwt.sign(
-                            {userToken: result[0].id},
-                            process.env.TOKEN,
-                            {expiresIn: '24h'},
-                            ),
-                        isAdmin: result[0].isAdmin
-                      });
-                  })
-                  .catch(error => res.status(500).json({ error }));
-                }
-            }
-        )
+      db.query(
+        login,
+        req.body.email,
+        (err, result) => {
+          if (err) throw err;
+          if (result.length == 0) {
+            return res.status(401).json({ message: 'Veuillez entrer un mot de passe.' })
+          }
+          if (result) {
+            bcrypt.compare(req.body.password, result[0].password)
+            .then(valid => {
+              if (!valid) {
+                return res.status(401).json({ message: 'Mot de passe incorrect.' })
+              };
+              res.status(200).json({
+                avatar: result[0].avatar,
+                id: result[0].id,
+                username: result[0].username,
+                email: result[0].email,
+                token: jwt.sign(
+                  {userToken: result[0].id},
+                  process.env.TOKEN,
+                  {expiresIn: '24h'},
+                ),
+                isAdmin: result[0].isAdmin
+              });
+            })
+            .catch(error => res.status(500).json({ error }));
+          }
+        }
+      )
     }
   )
+}
+
+exports.updateAvatar = (req, res, next) => {
+  
+  let attachment = null;
+    if (req.file) {
+      attachment = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+    } 
+    if (req.file == undefined) {
+      res.status(400).json({ error: "Il n'y a aucun contenu à ajouter !" });
+    }
+    else {
+      const updateAvatar = sqlUpdateAvatar(
+        attachment,
+        req.params.id
+      );
+      db.query(
+        updateAvatar,
+        function(error, result) {
+            if (error) throw error;
+            console.log(error);
+            if (result) {
+                // console.log(result)
+            }
+            res.status(201).json(result)
+        }
+      ) 
+    }
 }
 
 exports.getUserInfos = (req, res, next) => {
@@ -162,13 +195,17 @@ exports.updateProfile = (req, res, next) => {
     console.log(updateProfile);
   
     db.query(
-      updateProfile,
-      function(error) {
-        if (error) throw error;
-      },
-      //console.log(updateProfile)
-    )
-    res.status(201).json({ message: 'Modification confirmée' })
+      updateProfile, 
+      function(err) {
+        if (err) {
+          return res.status(401).json(err);
+        };
+        return res.json({ 
+          message: 'Modification confirmé!',
+          username: req.body.username
+        });
+      }
+    );
   })
 }
 

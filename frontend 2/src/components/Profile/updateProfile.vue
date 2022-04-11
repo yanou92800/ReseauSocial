@@ -90,13 +90,16 @@ export default {
             showing: true,
             text: "Votre profil a été modifié.",
           });
+          this.$store.state.username = this.userUpdateInfo.username;
+          this.$store.state.email = this.userUpdateInfo.email;
+          this.$store.state.password = this.userUpdateInfo.password;
           this.$router.go();
         })
         .catch(() => {
             this.$store.dispatch("setSnackbar", {
               color: "error",
               showing: true,
-              text: `l'adresse mail est déjà prise`,
+              text: `Username ou Email déjà pris`,
             });
         });
       }

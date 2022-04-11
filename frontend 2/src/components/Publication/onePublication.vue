@@ -12,6 +12,7 @@
 
             <v-list-item-content>
               <v-list-item-title class="admin font-weight-medium" v-if="publication.isAdmin == 1">ADMIN</v-list-item-title>
+              <v-list-item-title class="modo font-weight-medium" v-if="publication.isAdmin == 2">MODERATEUR</v-list-item-title>
               <v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
               <v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
             </v-list-item-content>
@@ -36,7 +37,7 @@
                 </template>
                 <i>Modifier</i>
               </v-tooltip>
-              <v-tooltip v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1">
+              <v-tooltip v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
                     <v-icon size="1.5rem">mdi-delete</v-icon>
@@ -406,6 +407,10 @@ a {
 
 .admin {
   color: yellow;
+}
+
+.modo {
+  color: blue;
 }
 
 </style>

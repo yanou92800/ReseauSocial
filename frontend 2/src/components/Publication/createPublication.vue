@@ -50,7 +50,7 @@ export default {
       const fd = new FormData();
       fd.append("userId", $store.state.userId);
       fd.append("content", this.content);
-      fd.append("attachment", this.file);
+      fd.append("inputFile", this.file);
 
       if (this.$refs.form.validate()) {
         axios

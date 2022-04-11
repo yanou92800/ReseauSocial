@@ -12,7 +12,8 @@ router.get('/infos/:id', auth.body, userCtrl.getUserInfos);
 router.get('/allUsers', userCtrl.getAllUsers);
 router.put('/addAdmin/:id', auth.admin, userCtrl.addAdmin);
 router.put('/removeAdmin/:id', auth.body, userCtrl.removeAdmin);
-router.put('/updateProfile/:id', auth.params, multer, password, userCtrl.updateProfile);
+router.put('/updateProfile/:id', auth.params, password, userCtrl.updateProfile);
+router.put('/updateAvatar/:id', auth.params, multer, userCtrl.updateAvatar);
 router.delete('/deleteProfile/:id', auth.body, userCtrl.deleteProfile);
 
 module.exports = router;
