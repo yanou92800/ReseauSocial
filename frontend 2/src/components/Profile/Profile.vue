@@ -4,7 +4,7 @@
       <v-col md="4" sm="6" cols="8" class="mx-auto">
         <v-row class="mx-auto" align="center" justify="center">
           <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" @click="addAdmin">Nommer modérateur</v-btn>
-          <v-btn v-if="$store.state.isAdmin != 0 && user.infos.isAdmin != 0 && user.infos.isAdmin != 1" @click="removeAdmin">Enlever modérateur</v-btn>
+          <v-btn v-if="$store.state.userId == user.infos.id && $store.state.isAdmin == 2 || $store.state.isAdmin == 1 && user.infos.isAdmin == 2" @click="removeAdmin">Enlever modérateur</v-btn>
         </v-row>
       </v-col>
       <v-col md="4" sm="6" cols="8" class="mx-auto">
@@ -43,9 +43,7 @@
       </v-col>
       <v-col md="4" sm="6" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1">
         <v-row class="mx-auto" align="center" justify="center">
-          <v-card style="padding: 1vw 6vw">
-            <v-btn style="padding: 3vw 7vw" @click.stop="dialog = true" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon style="font-size: 5vw">mdi-delete</v-icon></v-btn>
-          </v-card>
+          <v-btn x-large style="padding: 3vw 7vw;" @click.stop="dialog = true" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon style="font-size: 5vw">mdi-delete</v-icon></v-btn>
         </v-row>
         <v-dialog v-model="dialog" max-width="500">
           <v-card>
@@ -120,8 +118,8 @@ export default {
           this.$store.dispatch("setSnackbar", {
             text: "Votre avatar est modifié ",
           });
-          this.$store.state.avatar = this.imgPreview;
           this.user.infos.avatar = this.imgPreview;
+          this.$store.state.avatar = this.user.infos.avatar;
           this.imgPreview = "";
           this.file = "";
         })

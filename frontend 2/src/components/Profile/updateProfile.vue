@@ -1,22 +1,23 @@
 <template>
-  <v-col md="8" cols="8" class="mx-auto">
-    <v-form ref="form" @submit.prevent="updateProfile">
-      <v-col md="8" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId">
-        <v-card-text>
-          <v-form v-model="valid" ref="form">
-            <v-text-field v-model="userUpdateInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
-            <v-text-field v-model="userUpdateInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
-            <v-text-field v-model="userUpdateInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
-          </v-form>
-        </v-card-text>
+  <v-form ref="form" @submit.prevent="updateProfile">
+    <v-row style="justify-content: center" v-if="user.infos.id == $store.state.userId">
+      <v-col md="3" class="mt-10">
+        <v-card><v-card-text><strong>Username:</strong> {{ username }}</v-card-text></v-card>
+        <v-card><v-card-text><strong>Email:</strong> {{ email }}</v-card-text></v-card>
+        <v-card><v-card-text><strong>Password:</strong> ********</v-card-text></v-card>
       </v-col>
-      <v-row class="mx-auto" align="center" justify="center">
-        <v-card style="padding: 1vw 2vw">
-          <v-btn type="submit" color="success" style="padding: 2vw 3vw" @click.stop="updateProfile" dark aria-label="Sauvegarder nouveau profil"><v-icon style="font-size: 3vw">mdi-content-save</v-icon></v-btn>
-        </v-card>
-      </v-row>
-    </v-form>
-  </v-col>
+      <v-col md="4" class="mt-10">
+        <v-form v-model="valid" ref="form">
+          <v-text-field v-model="userUpdateInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
+          <v-text-field v-model="userUpdateInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
+          <v-text-field v-model="userUpdateInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-row style="justify-content: center">
+      <v-btn type="submit" color="success" style="padding: 2vw 3vw" @click.stop="updateProfile" dark aria-label="Sauvegarder nouveau profil"><v-icon style="font-size: 3vw">mdi-content-save</v-icon></v-btn>
+    </v-row>
+  </v-form>
 </template>
 
 <script>
@@ -41,7 +42,7 @@ export default {
       usernameRules: [
         (v) =>
           (v && v.length >= 4) ||
-          "Le nom d'utilisateur doit comprendre entre 5 et 30 caractères et peut contenir des tirets/espaces/apostrophes.",
+          "Le nom d'utilisateur doit comprendre entre 4 et 30 caractères et peut contenir des tirets/espaces/apostrophes.",
       ],
       passwordRules: [
         (v) =>
@@ -106,7 +107,15 @@ export default {
     },
   },
   computed: {
-    ...mapState(["userId"]),
+    ...mapState(["userId", "email", "username"]),
   },
 };
 </script>
+
+<style scoped>
+
+.v-card {
+  height: 65px;
+}
+
+</style>

@@ -7,7 +7,6 @@
         </router-link>
       </v-toolbar-title>
     </h1>
-
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
         <v-btn class="mx-2" to="/allPublications" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de toutes les publications">
@@ -16,8 +15,18 @@
       </template>
       <span>Accueil</span>
     </v-tooltip>
-
     <v-spacer></v-spacer>
+    <v-tooltip v-if="isLogged">
+      <template v-slot:activator="{ on, attrs }">
+        <v-form v-model="valid" ref="form" @submit.prevent="getUsername">
+          <v-row class="mt-5">
+            <v-icon @click="getUsername" icon v-bind="attrs" v-on="on" aria-label="Voir le profil de cet utlisateur">mdi-home</v-icon>
+            <v-text-field v-model="getUsername" label="Rechercher utilisateur"/>
+          </v-row>
+        </v-form>
+      </template>
+      <span>Recherche</span>
+    </v-tooltip>
     <span class="mr-5">Bienvenue {{ username }}</span>
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
@@ -27,7 +36,6 @@
       </template>
       <span>Mon profil</span>
     </v-tooltip>
-
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
         <v-btn class="mx-2" @click="logout()" icon v-bind="attrs" v-on="on" aria-label="Se déconnecter">

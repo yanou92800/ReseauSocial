@@ -53,6 +53,7 @@ export default {
 			.then((publication) => {
 				//console.log("Tableau" , publication)
 				this.publicationList = publication;
+				this.$store.state.avatar = this.user.infos.avatar;
 			})
 			.catch((error) => {
 				console.log(error);

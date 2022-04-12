@@ -27,7 +27,7 @@
 
           <v-card-actions align="center">
             <v-col>
-              <v-tooltip v-if="publication.userId == $store.state.userId">
+              <v-tooltip top v-if="publication.userId == $store.state.userId">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="mr-5" v-bind="attrs" v-on="on" text small>
                     <router-link :to="`/updatePublication/${publication.id}`">
@@ -37,7 +37,7 @@
                 </template>
                 <i>Modifier</i>
               </v-tooltip>
-              <v-tooltip v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
+              <v-tooltip top v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
                     <v-icon size="1.5rem">mdi-delete</v-icon>
@@ -111,6 +111,18 @@
         <v-card :key="index" v-for="(comment, index) in commentList" class="px-5 py-5 my-5" width="60vw">
           <strong>Commenté par {{ comment.username }} le {{ comment.createdAt | formatDate }} </strong>
           <v-card-text class="text-start">{{ comment.content }}</v-card-text>
+          <v-card-actions align="center">
+              <v-col>
+                <v-tooltip top v-if="comment.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn @click="deleteComment(comment)" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
+                      <v-icon size="1.5rem">mdi-delete</v-icon>
+                    </v-btn>
+                  </template>
+                  <i class="mt-5">Supprimer</i>
+                </v-tooltip>
+              </v-col>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -185,8 +197,8 @@ export default {
         )
         .then(() => {
           this.$store.dispatch("setSnackbar", {
-            text: "Votre publication a été supprimé.",
-          });
+              text: "La publication a été supprimé"
+          })
           this.$router.push({
             name: "allPublications",
           });
@@ -194,7 +206,41 @@ export default {
         .catch(() => {
           this.$store.dispatch("setSnackbar", {
             color: "error",
-            text: "Impossible de supprimer le publication.",
+            text: "Impossible de supprimer la publication.",
+          });
+        });
+    },
+    deleteComment(comment) {
+      axios
+        .delete(
+          `http://localhost:5000/api/deleteComment/${comment.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${$store.state.token}`,
+            },
+            data: {
+              userId: comment.userId
+            },
+          }
+        )
+        .then(() => {
+          const index = this.commentList.findIndex((value) => value.id === comment.id)
+          this.commentList.splice(index, 1)
+          if (comment.userId != $store.state.userId) {
+            this.$store.dispatch("setSnackbar", {
+              text: "Son commentaire a été supprimé"
+            })
+          }
+          else {
+            this.$store.dispatch("setSnackbar", {
+              text: "Votre commentaire a été supprimé"
+            })
+          }
+        })
+        .catch(() => {
+          this.$store.dispatch("setSnackbar", {
+            color: "error",
+            text: "Impossible de supprimer le commentaire.",
           });
         });
     },
@@ -282,32 +328,6 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-        });
-    },
-    deleteComment(id) {
-      axios
-        .delete(
-          "http://localhost:5000/api/onePublication/" +
-            +this.$route.params.id +
-            "/deleteComment/" +
-            id,
-          {
-            headers: {
-              Authorization: `Bearer ${$store.state.token}`,
-            },
-          }
-        )
-        .then(() => {
-          this.$store.dispatch("setSnackbar", {
-            text: "Commentaire supprimé.",
-          });
-          window.location.reload();
-        })
-        .catch(() => {
-          this.$store.dispatch("setSnackbar", {
-            color: "error",
-            text: "Impossible de supprimer votre commentaire.",
-          });
         });
     },
     getLikes() {

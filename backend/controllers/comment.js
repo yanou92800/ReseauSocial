@@ -91,7 +91,7 @@ exports.updateComment = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
 
     const deleteComment = sqlDeleteComment(
-        req.body.id,
+        req.params.id,
     );
 
     //console.log(deleteComment)

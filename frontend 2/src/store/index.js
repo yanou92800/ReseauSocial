@@ -12,6 +12,7 @@ export default new Vuex.Store({
 		username: null,
 		avatar: null,
 		isAdmin: 0,
+		email: null,
 		isLogged: false,
 		snackbar: {},
 	},
@@ -22,6 +23,9 @@ export default new Vuex.Store({
 		},
 		setAdmin(state, admin) {
 			state.isAdmin = admin;
+		},
+		setEmail(state, email) {
+			state.email = email;
 		},
 		setAvatar(state, avatar) {
 			state.avatar = avatar;
@@ -42,7 +46,8 @@ export default new Vuex.Store({
 			state.avatar = '',
 			state.isAdmin = 0,
 			state.isLogged = false,
-			state.snackbar = {}
+			state.snackbar = {},
+			state.email = ''
 		},
 	},
 	actions: {
@@ -54,6 +59,9 @@ export default new Vuex.Store({
 		},
 		setAvatar({ commit }, avatar) {
 			commit("setAvatar", avatar);
+		},
+		setEmail({ commit }, email) {
+			commit("setEmail", email);
 		},
 		setUser({ commit }, user) {
 			commit("setUser", user);

@@ -32,6 +32,10 @@ const sqlGetUserInfos = (id) => {
   return `SELECT * FROM users WHERE id = '${id}'`
 };
 
+const sqlGetUsername = (username) => {
+  return `SELECT * FROM users WHERE username = '${username}'`
+};
+
 const sqlGetAllUsers = () => {
   return `SELECT username FROM users`
 };
@@ -104,7 +108,8 @@ exports.login = (req, res, next) => {
                 avatar: result[0].avatar,
                 id: result[0].id,
                 username: result[0].username,
-                email: result[0].email,
+                email: req.body.email,
+                password: result[0].password,
                 token: jwt.sign(
                   {userToken: result[0].id},
                   process.env.TOKEN,
@@ -173,6 +178,31 @@ exports.getUserInfos = (req, res, next) => {
           password: result[0].password,
           isAdmin: result[0].isAdmin,
           id: result[0].id
+        }
+      })
+    }
+  )
+};
+
+exports.getUsername = (req, res, next) => {
+  
+  const getUsername = sqlGetUsername(
+    req.body.username
+  );
+
+  //console.log(getUserInfos)
+  
+  db.query(
+    getUsername,
+    function(error, result) {
+      if (error) throw error;
+      if (result) {
+        console.log(result)
+        }
+      res.status(200).json({
+        message: 'Acces au profil',
+        infos: {
+          username: result[0].username,
         }
       })
     }
