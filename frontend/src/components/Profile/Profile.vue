@@ -1,79 +1,234 @@
 <template>
-  <div class="header-top">
-    <div class="navbar">
-      <p>Bienvenue {{ user.username }}</p>
-      <img :src="user.avatar"/>
-      <button @click="logout()" class="button">Déconnexion</button>
-    </div>
-  </div>
+  <v-app>
+    <v-col class="my-10">
+      <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-row class="mx-auto" align="center" justify="center">
+          <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" @click="addAdmin">Nommer modérateur</v-btn>
+          <v-btn v-if="$store.state.userId == user.infos.id && $store.state.isAdmin == 2 || $store.state.isAdmin == 1 && user.infos.isAdmin == 2" @click="removeAdmin">Enlever modérateur</v-btn>
+        </v-row>
+      </v-col>
+      <v-col md="4" sm="6" cols="8" class="mx-auto">
+        <v-row>
+          <v-list-item-title class="admin font-weight-medium" align="center" v-if="user.infos.isAdmin == 1">ADMINISTRATEUR</v-list-item-title>
+          <v-list-item-title class="modo font-weight-medium" align="center" v-if="user.infos.isAdmin == 2">MODERATEUR</v-list-item-title>
+          <v-list-item-title class="title mb-3" align="center">{{ user.infos.username }}</v-list-item-title>
+        </v-row>
+        <v-card>
+          <v-img :src="user.infos.avatar"></v-img>
+        </v-card>
+      </v-col>
+      <v-col md="4" sm="6" cols="8" class="mx-auto" v-if="$store.state.userId == user.infos.id">
+        <v-row class="mx-auto" align="center" justify="center">
+          <v-form ref="form" enctype="multipart/form-data" @submit.prevent="updateAvatar">
+            <v-card align="center" for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-card>
+            <div>
+              <input type="file" ref="file" name="file" id="file" class="file mt-5" @change="selectFile"/>
+            </div>
+            <div>
+              <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>
+              <img contain height="100" v-if="imgPreview" :src="imgPreview"/>
+            </div>
+            <div v-if="imgPreview != ''" align="center">
+              <v-btn align="center" color="red darken-2 white--text" type="submit" value="submit" dark>Confirmer</v-btn>
+            </div>
+          </v-form>
+        </v-row>
+      </v-col>
+      <v-col md="4" sm="6" cols="8" class="mx-auto" v-if="$store.state.userId == user.infos.id">
+        <v-row class="mx-auto" align="center" justify="center">
+          <router-link :to="`/updateProfile/${$store.state.userId}`" class="text-decoration-none">
+            <v-btn>Modifier profil</v-btn>
+          </router-link>
+        </v-row>
+      </v-col>
+      <v-col cols= "10" sm="5" md="3" lg="2" xl="2" class="mx-auto" v-if="$store.state.userId != user.infos.id">
+        <v-card style="cursor : pointer"><v-icon>mdi-email</v-icon> Envoyer message privé</v-card>
+      </v-col>
+      <v-col md="4" sm="6" cols="8" class="mx-auto" v-if="user.infos.id == $store.state.userId || $store.state.isAdmin == 1">
+        <v-row class="mx-auto" align="center" justify="center">
+          <v-btn x-large style="padding: 3vw 7vw;" @click.stop="dialog = true" color="red darken-2" dark aria-label="Supprimer le compte"><v-icon style="font-size: 5vw">mdi-delete</v-icon></v-btn>
+        </v-row>
+        <v-dialog v-model="dialog" max-width="500">
+          <v-card>
+            <v-card-title v-if="user.infos.id == $store.state.userId">Êtes vous sûr de vouloir supprimer votre profil ?</v-card-title>
+            <v-card-title v-else>Êtes vous sûr de vouloir supprimer son profil ?</v-card-title>
+            <v-card-actions @click="dialog = false">
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text>Non</v-btn>
+              <v-btn color="red darken-3" text @click="deleteProfile" v-if="user.infos.id == $store.state.userId">Oui, je veux supprimer mon compte.</v-btn>
+              <v-btn color="red darken-3" text @click="deleteProfile" v-else>Oui, je veux supprimer son compte.</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-col>
+    </v-col>
+  </v-app>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import axios from "axios";
+import $store from "@/store/index";
+import { mapState } from "vuex";
 export default {
-  name: 'Profile',
-  mounted() {
-    console.log(this.$store.state.user);
-    if (this.$store.state.user.userId == -1) {
-      this.$router.push('/');
-      return ;
-    }
-    this.user = this.$store.state.user;
-    console.log(this.user)
+  name: "Profile",
+  data() {
+    return {
+      user: {
+        infos: {},
+      },
+      file: "",
+      imgPreview: "",
+      dialog: false,
+    };
   },
-  computed: {
-    ...mapState({
-      user: 'user',
-    })
+  mounted() {
+    axios
+      .get("http://localhost:5000/api/infos/" + this.$route.params.id, {
+        headers: {
+          Authorization: `Bearer ${$store.state.token}`,
+        },
+      })
+      .then((response) => {
+        //console.log(response);
+        this.user = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   methods: {
-    logout() {
-      this.$store.commit('logout');
-      this.$router.push('/');
-    }
+    selectFile() {
+      this.file = this.$refs.file.files[0];
+      this.imgPreview = URL.createObjectURL(this.file);
+    },
+    updateAvatar(response) {
+      console.log("localStorage" , response);
+      const fd = new FormData();
+      fd.append("inputFile", this.file);
+
+      axios
+        .put(
+          "http://localhost:5000/api/updateAvatar/" +
+          this.$route.params.id,
+          fd, 
+          {
+            headers: {
+              Authorization: `Bearer ${$store.state.token}`,
+            },
+          }
+        )
+        .then(() => {
+          this.$store.dispatch("setSnackbar", {
+            text: "Votre avatar est modifié ",
+          });
+          this.user.infos.avatar = this.imgPreview;
+          this.$store.state.avatar = this.user.infos.avatar;
+          this.imgPreview = "";
+          this.file = "";
+        })
+        .catch(() => {
+          this.$store.dispatch("setSnackbar", {
+            color: "error",
+            text: "Veuillez réessayer.",
+          });
+        });
+    },
+    addAdmin() {
+      axios
+        .put("http://localhost:5000/api/addAdmin/" + this.$route.params.id, {}, {
+          headers: {
+            Authorization: `Bearer ${$store.state.token}`
+          }
+        })
+        .then(() => {
+          this.$store.dispatch("setSnackbar", {
+            text: "Modérateur ajouté",
+          });
+          this.$router.go();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    removeAdmin() {
+      axios
+        .put("http://localhost:5000/api/removeAdmin/" + this.$route.params.id, {}, {
+          headers: {
+            Authorization: `Bearer ${$store.state.token}`
+          }
+        })
+        .then(() => {
+          if (this.user.infos.id === $store.state.userId) {
+            this.$store.dispatch('setAdmin', 0)
+          }
+          this.$store.dispatch("setSnackbar", {
+            text: "Modérateur enlevé",
+          });
+          this.$router.go();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    deleteProfile() {
+      this.dialog = false;
+      axios
+        .delete(
+          "http://localhost:5000/api/deleteProfile/" + this.$route.params.id,
+          {
+            headers: {
+              Authorization: `Bearer ${$store.state.token}`,
+            },
+          }
+        )
+        .then(() => {
+          window.localStorage.vuex = JSON.stringify({});
+          this.$store.dispatch("setSnackbar", {
+            text: "Votre profil a été supprimé. A bientôt !",
+          });
+          this.$store.dispatch("logout"), this.$router.push("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
-}
+  computed: {
+    ...mapState(["userId", "isAdmin"]),
+  },
+};
 </script>
 
 <style scoped>
-img {
-  width: 40px;
-  height: 40px;
-  margin-top: 7px;
-  margin-left: 5px;
-  margin-right: 5px;
+.avatar {
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
-p {
-  margin-left: 5px;
-  margin-right: 5px;
+.avatar + label {
+  font-weight: 500;
+  display: inline-block;
+  cursor: pointer;
 }
-.button {
-  width: 150px;
-  height: 30px;
-  margin-top: 12px;
-  margin-left: 5px;
-  margin-right: 5px;
-  padding: 4px;
+
+.avatar:focus + label,
+.avatar + label:hover {
+  background-color: #effbff;
 }
-.header-top {
-  height: 55px;
-  background: #1a2a6c;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  color: white;
-  width: 100%;
-  border-bottom: 1px solid orange;
-  text-align: center;
-  line-height: 50px;
-  font-size: 25px;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1;
+
+.title {
+    font-size: 2rem !important;
 }
-.navbar {
-  display: flex;
-  justify-content: right;
+
+.admin {
+	color: yellow;
+  font-size: 2rem !important;
 }
+
+.modo {
+  color: blue;
+  font-size: 2rem !important;
+}
+
 </style>

@@ -1,98 +1,37 @@
 <template>
-  <router-view></router-view>
+	<v-app>
+		<Header />
+		<v-main>
+			<router-view />
+		</v-main>
+		<SnackBar />
+		<Footer />
+	</v-app>
 </template>
 
 <script>
-
+import Header from "@/components/Header";
+import SnackBar from "@/components/SnackBar";
+import Footer from "@/components/Footer";
 export default {
-  name: 'App',
-  components: {
-  }
-}
+	name: "App",
+	components: {
+		Header,
+		SnackBar,
+		Footer,
+	},
+};
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;800&display=swap');
-
-* {
-  font-family: 'Poppins', sans-serif;
-  margin:0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 #app {
-  max-width: 100%;
-}
-
-body {
   background: #1a2a6c;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding:32px;
-}
-
-img {
-  max-width: 100%;
-  border-radius: 8px;
-}
-
-.card {
-  max-width: 100%;
-  width: 540px;
-  background: white;
-  border-radius: 16px;
-  padding:32px;
-}
-
-.card__title {
-  text-align:center;
-  font-weight: 800;
-}
-
-.card__subtitle {
-  text-align: center;
-  color:#666;
-  font-weight: 500;
-}
-
-.button {
-  background: #2196F3;
-  color:white;
-  border-radius: 8px;
-  font-weight: 800;
-  font-size: 15px;
-  border: none;
-  width: 100%;
-  padding: 16px;
-  transition: .4s background-color;
-}
-
-.card__action {
-  color:#2196F3;
-  text-decoration: underline;
-}
-
-.card__action:hover {
-  cursor:pointer;
-}
-
-.button:hover {
-  cursor:pointer;
-  background: #1976D2;
-}
-
-.button--disabled {
-  background:#cecece;
-  color:#ececec
-}
-.button--disabled:hover {
-  cursor:not-allowed;
-  background:#cecece;
+	width: 100vw;
 }
 
 </style>
+
+

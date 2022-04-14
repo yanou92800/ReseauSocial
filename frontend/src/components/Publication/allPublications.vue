@@ -1,160 +1,98 @@
 <template>
-    <Profile></Profile>
-    <div class="container">
-        <form @submit.prevent="onSubmit">
-            <textarea v-model="v$.textareaCreatePublication.$model" type="texte"></textarea>
-            <button :disabled="v$.textareaCreatePublication.$invalid" @click.prevent="createPublication()">Publier</button>
-        </form>
-        <div class="container-card">
-            <div :key="index" v-for="(publication, index) in tableauPublications" class="card">
-                <router-link :to="`/onePublication/${publication.id}`">Posté par {{ publication.username }} le {{ publication.createdAt }}</router-link>
-                <item :id="index" :publication="publication.content" :deletePublication="() => deletePublication(publication)"></item>
-            </div>
-        </div>
-    </div>
+	<v-app>
+		<createPublication v-on:getAllPublications="getAllPublications($event)"></createPublication>
+		<v-container justify-content="center" align="center">
+			<v-flex>
+				<v-card v-for="(publication, index) in publicationList" :key="index" flat hover :to="{ name: 'onePublication', params: { id: publication.id } }">
+					<v-card class="my-10 mx-auto" align="center">
+						<v-list-item class="red" align="start" hover>
+							<router-link :to="`/Profile/${publication.userId}`">
+								<v-list-item-avatar outlined color="grey darken-3">
+									<v-img :src="publication.avatar" alt="photo de profil"></v-img>
+								</v-list-item-avatar>
+							</router-link>
+							<v-list-item-content>
+								<v-list-item-title class="admin font-weight-medium" v-if="publication.isAdmin == 1">ADMIN</v-list-item-title>
+								<v-list-item-title class="modo font-weight-medium" v-if="publication.isAdmin == 2">MODERATEUR</v-list-item-title>
+								<v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
+								<v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
+							</v-list-item-content>
+						</v-list-item>
+						<v-row>
+							<v-col>
+								<v-card-text class="text-start">{{ publication.content }}</v-card-text>
+									<v-img v-if="publication.attachment != 'null'" contain max-height="300" :src="publication.attachment"></v-img>
+							</v-col>
+						</v-row>
+					</v-card>
+				</v-card>
+			</v-flex>
+		</v-container>
+	</v-app>
 </template>
 
 <script>
-import Profile from '../Profile/Profile'
-import Item from '../Item'
-import axios from "axios";
-import useVuelidate from '@vuelidate/core'
-import { required, minLength } from '@vuelidate/validators'
 import $store from "@/store/index";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
+import createPublication from "./createPublication"
+import { PublicationService } from "./publication.service"
+
 export default {
-    name: "allPublications",
-    setup() {
-        return { v$: useVuelidate() }
-    },
-    data(){
-        return {
-            textareaCreatePublication: '',
-            tableauPublications: [],
-        }
-    },
-    async created() {
-		await axios({
-            method: "GET",
-            url: "http://localhost:5000/api/allPublications",
-            headers: { 
-                    "Authorization": `Bearer ${$store.state.user.token}`
-            }
-        })
-			.then((response) => {
-                console.log(response)
-				this.tableauPublications = response.data.map((publication) => {
-                    publication.createdAt = dayjs(publication.createdAt).format("DD-MMM-YYYY à HH:mm");
-                    return publication
-                });
+	name: "allPublications",
+	components: {
+		'createPublication' : createPublication
+	},
+	data() {
+		return {
+			user: {},
+			publicationList: [],
+		};
+	},
+	mounted() {
+		PublicationService.getAllPublications($store.state.token)
+			.then((publication) => {
+				//console.log("Tableau" , publication)
+				this.publicationList = publication;
+				this.$store.state.avatar = this.user.infos.avatar;
 			})
-			
 			.catch((error) => {
 				console.log(error);
 			});
 	},
-    validations () {
-        return {
-            textareaCreatePublication: {required, minLength: minLength(4)},
-            }
-        },
-    components: {
-            'item': Item,
-            'Profile': Profile
-    },
-    methods: {
-        createPublication() {
-            console.log($store.state)
-            axios({
-                method: "POST",
-                url: "http://localhost:5000/api/createPublication",
-                headers: { 
-                    "Authorization": `Bearer ${$store.state.user.token}`
-                },
-                data: {
-                    username: $store.state.user.username,
-                    userId: $store.state.user.userId,
-                    content: this.textareaCreatePublication
-                }
-            })
-            .then((response) => {
-                this.created();
-                this.textareaCreatePublication = '';
-                console.log("createPubli", response)
-            })
-        },
-        async created() {
-            await axios({
-                method: "GET",
-                url: "http://localhost:5000/api/allPublications",
-                headers: { 
-                        "Authorization": `Bearer ${$store.state.user.token}`
-                }
-            })
-            .then((response) => {
-                console.log(response)
-                this.tableauPublications = response.data.map((publication) => {
-                    publication.createdAt = dayjs(publication.createdAt).format("DD-MMM-YYYY à HH:mm");
-                    return publication
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        },
-        deletePublication(publication) {
-            axios({
-                method: "DELETE",
-                url: `http://localhost:5000/api/deletePublication/${publication.id}`,
-                headers: { 
-                    "Authorization": `Bearer ${$store.state.user.token}`
-                },
-                data: {
-                    userId: publication.userId
-                }
-            })
-            .then(() => {
-                const index = this.tableauPublications.findIndex((value) => value.id === publication.id)
-                this.tableauPublications.splice(index, 1) //enlève 1 élément du tableau
-            })
-        },
-    },
-}
+	methods: {
+		getAllPublications() {
+			PublicationService.getAllPublications($store.state.token)
+			.then((publication) => {
+				//console.log("Tableau" , publication)
+				this.publicationList = publication;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		}
+	},
+	filters: {
+		formatDate(value) {
+			if (value) {
+				return dayjs(String(value)).format("DD-MMM-YYYY à HH:mm");
+			}
+		},
+	},
+};
 </script>
 
-<style scoped>
+<style>
+
 .container {
-    margin-top: 50px;
-    width: 500px;
+	width: 60vw;
 }
-textarea {
-    display: block;
-    width: 100%;
-    height: 150px;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;
+
+.admin {
+	color: yellow;
 }
-.container-card {
-    display: flex;
-    flex-direction: column;
+
+.modo {
+  color: blue;
 }
-.card {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 25px 50px 25px 25px;
-    width: 100%;
-    position: relative;
-    font-size: 20px;
-    display: flex;
-    flex-direction: column;
-    word-wrap: break-word;
-}
-a {
-    text-decoration: none;
-    color: black;
-    font-weight: 700;
-}
+
 </style>

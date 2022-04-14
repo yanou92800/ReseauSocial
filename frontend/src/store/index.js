@@ -1,94 +1,81 @@
-import { createStore } from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
+Vue.use(Vuex);
 
-const axios = require('axios');
-
-const instance = axios.create({
-  baseURL: 'http://localhost:5000/api/'
+export default new Vuex.Store({
+	strict: false,
+	plugins: [createPersistedState()],
+	state: {
+		token: null,
+		userId: null,
+		username: null,
+		avatar: null,
+		isAdmin: 0,
+		email: null,
+		isLogged: false,
+		snackbar: {},
+	},
+	mutations: {
+		setToken(state, token) {
+			state.token = token;
+			state.isLogged = !!token; //vérifie si le token est défini ou null et renvoie true ou false
+		},
+		setAdmin(state, admin) {
+			state.isAdmin = admin;
+		},
+		setEmail(state, email) {
+			state.email = email;
+		},
+		setAvatar(state, avatar) {
+			state.avatar = avatar;
+		},
+		setUser(state, user) {
+			state.userId = user;
+		},
+		setUsername(state, user) {
+			state.username = user;
+		},
+		setSnackbar(state, snackbar) {
+			state.snackbar = snackbar;
+		},
+		logout(state){
+			state.token = ''
+			state.userId = '',
+			state.username = '',
+			state.avatar = '',
+			state.isAdmin = 0,
+			state.isLogged = false,
+			state.snackbar = {},
+			state.email = ''
+		},
+	},
+	actions: {
+		setToken({ commit }, token) {
+			commit("setToken", token);
+		},
+		setAdmin({ commit }, admin) {
+			commit("setAdmin", admin);
+		},
+		setAvatar({ commit }, avatar) {
+			commit("setAvatar", avatar);
+		},
+		setEmail({ commit }, email) {
+			commit("setEmail", email);
+		},
+		setUser({ commit }, user) {
+			commit("setUser", user);
+		},
+		setUsername({ commit }, user) {
+			commit("setUsername", user);
+		},
+		setSnackbar({ commit }, snackbar) {
+			snackbar.showing = true;
+			snackbar.color = snackbar.color || "teal";
+			commit("setSnackbar", snackbar);
+		},
+		logout({ commit }) {
+			commit("logout")
+		},
+	},
 });
-
-let user = localStorage.getItem('user');
-if (!user) {
- user = {
-    userId: -1,
-    token: '',
-  }; 
-} else {
-  try {
-    user = JSON.parse(user);
-    instance.defaults.headers.common['Authorization'] = user.token;
-  } catch (ex) {
-    user = {
-      userId: -1,
-      token: '',
-    };
-  }
-}
-
-// Create a new store instance.
-const store = createStore({
-  state: {
-    user: user,
-  },
-  mutations: {
-    setStatus(state, status) {
-      state.status = status;
-    },
-    logUser(state, user) {
-      instance.defaults.headers.common['Authorization'] = user.token;
-      localStorage.setItem('user', JSON.stringify(user));
-      state.user = user;
-    },
-    userInfos(state, user) {
-      state.userInfos = user;
-    },
-    logout(state) {
-      state.user = {
-        userId: -1,
-        token: '',
-      }
-      localStorage.removeItem('user');
-    }
-  },
-  actions: {
-    login: ({commit}, userInfos) => {
-      commit('setStatus', 'loading');
-      return new Promise((resolve, reject) => {
-        instance.post('/login', userInfos)
-        .then(function (response) {
-          commit('setStatus', '');
-          commit('logUser', response.data);
-          resolve(response);
-        })
-        .catch(function (error) {
-          commit('setStatus', 'error_login');
-          reject(error);
-        });
-      });
-    },
-    signup: ({commit}, userInfos) => {
-      commit('setStatus', 'loading');
-      return new Promise((resolve, reject) => {
-        commit;
-        instance.post('/signup', userInfos)
-        .then(function (response) {
-          commit('setStatus', 'getAllPublications');
-          resolve(response);
-        })
-        .catch(function (error) {
-          commit('setStatus', 'error_signup');
-          reject(error);
-        });
-      });
-    },
-    getUserInfos: ({commit}) => {
-      instance.get('/infos')
-      .then(function (response) {
-        commit('userInfos', response.data.infos);
-      })
-      .catch(function () {
-      });
-    },
-  }
-})
-
-export default store;

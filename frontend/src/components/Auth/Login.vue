@@ -1,132 +1,58 @@
 <template>
-  <div class="card">
-    <h1 class="card__title" v-if="mode == 'login'">Connexion</h1>
-    <h1 class="card__title" v-else>Inscription</h1>
-    <p class="card__subtitle" v-if="mode == 'login'">Tu n'as pas encore de compte ? <span class="card__action" @click="switchToSignup()">Créer un compte</span></p>
-    <p class="card__subtitle" v-else>Tu as déjà un compte ? <span class="card__action" @click="switchToLogin()">Se connecter</span></p>
-    <div class="form-row">
-      <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail"/>
-    </div>
-    <div class="form-row" v-if="mode == 'signup'">
-      <input v-model="username" class="form-row__input" type="text" placeholder="Username"/>
-    </div>
-    <div class="form-row">
-      <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe"/>
-    </div>
-    <div class="form-row" v-if="mode == 'login' && status == 'error_login'">
-      Adresse mail et/ou mot de passe invalide
-    </div>
-    <div class="form-row" v-if="mode == 'signup' && status == 'error_signup'">
-      Assurez vous d'utiliser un mail/username valide et pas déjà utilisé et que votre mot de passe soit bon 
-    </div>
-    <div class="form-row">
-      <button @click="login()" class="button" :class="{'button--disabled' : !validatedFields}" v-if="mode == 'login'">
-        <span v-if="status == 'loading'">Connexion en cours...</span>
-        <span v-else>Connexion</span>
-      </button>
-      <button @click="signup()" class="button" :class="{'button--disabled' : !validatedFields}" v-else>
-        <span v-if="status == 'loading'">Création en cours...</span>
-        <span v-else>Créer mon compte</span>
-      </button>
-    </div>
-  </div>
+  <v-card width="400" class="mx-auto mt-5 red lighten-5">
+    <v-card-title>Connexion</v-card-title>
+    <v-card-text>
+      <v-form v-model="valid" ref="form">
+        <v-text-field v-model="userInfo.email" label="Email" prepend-icon="mdi-at"/>
+        <v-text-field v-model="userInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
+      </v-form>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn color="#000000" dark @click="login">Connexion</v-btn>
+      <v-spacer />
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-
-import { mapState } from 'vuex'
-
+import axios from "axios";
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     return {
-      mode: 'login',
-      email: '',
-      username: '',
-      password: '',
-    }
-  },
-  mounted() {
-    if (this.$store.state.user.userId != -1) {
-      this.$router.push('/allPublications');
-      return ;
-    }
-  },
-  computed: {
-    validatedFields() {
-      if (this.mode == 'signup') {
-        if (this.email != "" && this.username != "" && this.password != "") {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        if (this.email != "" && this.password != "") {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    },
-    ...mapState(['status'])
+      valid: false,
+      showPassword: false,
+      userInfo: {
+        email: "",
+        password: "",
+      },
+    };
   },
   methods: {
-    switchToSignup() {
-      this.mode = 'signup';
-    },
-    switchToLogin() {
-      this.mode = 'login';
-    },
     login() {
-      const self = this;
-      this.$store.dispatch('login', {
-        email: this.email,
-        password: this.password,
-      }).then(function () {
-        self.$router.push('/allPublications');
-      }, function (error) {
-        console.log(error); 
-      })
+      axios
+        .post("http://localhost:5000/api/login", this.userInfo)
+        .then((response) => {
+          console.log("Login OK! ", response);
+          this.$store.dispatch("setToken", response.data.token);
+          this.$store.dispatch("setAdmin", response.data.isAdmin);
+          this.$store.dispatch("setEmail", response.data.email);
+          this.$store.dispatch("setAvatar", response.data.avatar);
+          this.$store.dispatch("setUser", response.data.id);
+          this.$store.dispatch("setUsername", response.data.username);
+          this.$store.dispatch("setSnackbar", {
+            text: `Salut, ${response.data.username} !`,
+          });
+          this.$router.push("/allPublications");
+        })
+        .catch(() => {
+          this.$store.dispatch("setSnackbar", {
+            color: "error",
+            text: `Mot de passe incorrect !`,
+          });
+        });
     },
-    signup() {
-      const self = this;
-      this.$store.dispatch('signup', {
-        email: this.email,
-        username: this.username,
-        password: this.password,
-      }).then(function () {
-        self.login();
-      }, function (error) {
-        console.log(error);
-      })
-    },
-  }
-}
+  },
+};
 </script>
-
-<style scoped>
-  .form-row {
-    display: flex;
-    margin: 16px 0px;
-    gap:16px;
-    flex-wrap: wrap;
-  }
-
-  .form-row__input {
-    padding:8px;
-    border: none;
-    border-radius: 8px;
-    background:#f2f2f2;
-    font-weight: 500;
-    font-size: 16px;
-    flex:1;
-    min-width: 100px;
-    color: black;
-  }
-
-  .form-row__input::placeholder {
-    color:#aaaaaa;
-  }
-
-
-</style>

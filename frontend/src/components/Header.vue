@@ -19,8 +19,8 @@
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
         <v-form v-model="valid" ref="form" @submit.prevent="getUsername">
-          <v-row class="mt-5">
-            <v-icon @click="getUsername" icon v-bind="attrs" v-on="on" aria-label="Voir le profil de cet utlisateur">mdi-home</v-icon>
+          <v-row class="mt-5 mr-5">
+            <v-icon class="mb-5 mr-5" @click="getUsername" icon v-bind="attrs" v-on="on" aria-label="Voir le profil de cet utlisateur">mdi-magnify</v-icon>
             <v-text-field v-model="getUsername" label="Rechercher utilisateur"/>
           </v-row>
         </v-form>
@@ -49,6 +49,8 @@
 
 <script>
 import { mapState } from 'vuex'
+// import axios from 'axios'
+// import $store from "@/store/index"
 
 export default {
   name: "Header",
@@ -67,6 +69,21 @@ export default {
         this.$router.push(`/Profile/${this.$store.state.userId}`);
       }
     },
+    // getUsername() {
+    //   axios
+    //   .get("http://localhost:5000/api/infos/" + this.$route.params.id, this.getUsername, {
+    //     headers: {
+    //       Authorization: `Bearer ${$store.state.token}`,
+    //     },
+    //   })
+    //   .then((response) => {
+    //     //console.log(response);
+    //     this.user = response.data;
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    // }
   },
 };
 </script>
