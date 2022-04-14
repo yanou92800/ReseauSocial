@@ -6,7 +6,7 @@
 				<v-card v-for="(publication, index) in publicationList" :key="index" flat hover :to="{ name: 'onePublication', params: { id: publication.id } }">
 					<v-card class="my-10 mx-auto" align="center">
 						<v-list-item class="red" align="start" hover>
-							<router-link :to="`/Profile/${publication.userId}`">
+							<router-link title="Profil" aria-label="Aller à son profil" :to="`/Profile/${publication.userId}`">
 								<v-list-item-avatar outlined color="grey darken-3">
 									<v-img :src="publication.avatar" alt="photo de profil"></v-img>
 								</v-list-item-avatar>
@@ -21,7 +21,7 @@
 						<v-row>
 							<v-col>
 								<v-card-text class="text-start">{{ publication.content }}</v-card-text>
-									<v-img v-if="publication.attachment != 'null'" contain max-height="300" :src="publication.attachment"></v-img>
+								<v-img v-if="publication.attachment != 'null'" contain max-height="300" :src="publication.attachment"></v-img>
 							</v-col>
 						</v-row>
 					</v-card>
@@ -88,11 +88,11 @@ export default {
 }
 
 .admin {
-	color: yellow;
+	color: #26172B;
 }
 
 .modo {
-  color: blue;
+  color:#001438 ;
 }
 
 </style>

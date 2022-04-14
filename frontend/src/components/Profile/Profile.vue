@@ -222,12 +222,12 @@ export default {
 }
 
 .admin {
-	color: yellow;
+	color: #26172B;
   font-size: 2rem !important;
 }
 
 .modo {
-  color: blue;
+  color: #001438;
   font-size: 2rem !important;
 }
 

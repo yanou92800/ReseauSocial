@@ -1,12 +1,10 @@
 <template>
   <v-app-bar app color="dark" dark width="100vw">
-    <h1>
       <v-toolbar-title>
-        <router-link to="/" class="text-decoration-none white--text">
+        <router-link title="Home" aria-label="Aller à home" to="/" class="text-decoration-none white--text">
           <v-img src="../assets/icon.png" width="35" class="rounded-circle" alt="HOME"></v-img>
         </router-link>
       </v-toolbar-title>
-    </h1>
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
         <v-btn class="mx-2" to="/allPublications" icon v-bind="attrs" v-on="on" aria-label="Aller à la page de toutes les publications">
@@ -16,7 +14,7 @@
       <span>Accueil</span>
     </v-tooltip>
     <v-spacer></v-spacer>
-    <v-tooltip v-if="isLogged">
+    <!--<v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
         <v-form v-model="valid" ref="form" @submit.prevent="getUsername">
           <v-row class="mt-5 mr-5">
@@ -26,7 +24,7 @@
         </v-form>
       </template>
       <span>Recherche</span>
-    </v-tooltip>
+    </v-tooltip>-->
     <span class="mr-5">Bienvenue {{ username }}</span>
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">

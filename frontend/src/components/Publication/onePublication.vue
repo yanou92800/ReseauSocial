@@ -4,12 +4,11 @@
       <v-col cols="12">
         <v-card class="mx-auto" align="center" min-width="40vw" max-width="70vw">
           <v-list-item class="red" align="start" hover>
-            <router-link :to="`/Profile/${publication.userId}`">
+            <router-link title="Profil" aria-label="Aller à son profil" :to="`/Profile/${publication.userId}`">
               <v-list-item-avatar outlined color="grey darken-3">
                 <v-img :src="publication.avatar" alt="photo de profil"></v-img>
               </v-list-item-avatar>
             </router-link>
-
             <v-list-item-content>
               <v-list-item-title class="admin font-weight-medium" v-if="publication.isAdmin == 1">ADMIN</v-list-item-title>
               <v-list-item-title class="modo font-weight-medium" v-if="publication.isAdmin == 2">MODERATEUR</v-list-item-title>
@@ -17,20 +16,18 @@
               <v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-
           <v-row>
             <v-col>
               <v-card-text class="text-start">{{ publication.content }}</v-card-text>
               <v-img contain max-height="300" :src="publication.attachment"></v-img>
             </v-col>
           </v-row>
-
           <v-card-actions align="center">
             <v-col>
               <v-tooltip top v-if="publication.userId == $store.state.userId">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn class="mr-5" v-bind="attrs" v-on="on" text small>
-                    <router-link :to="`/updatePublication/${publication.id}`">
+                    <router-link title="Modification" aria-label="Modifier la publication" :to="`/updatePublication/${publication.id}`">
                       <v-icon color="cyan darken-2" size="1.5rem">mdi-pen-plus</v-icon>
                     </router-link>
                   </v-btn>
@@ -426,11 +423,11 @@ a {
 }
 
 .admin {
-  color: yellow;
+  color: #26172B;
 }
 
 .modo {
-  color: blue;
+  color: #001438;
 }
 
 </style>

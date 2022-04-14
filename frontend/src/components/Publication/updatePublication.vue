@@ -2,7 +2,7 @@
   <v-container v-if="publication.userId == $store.state.userId">
     <v-card class="pa-10 mt-5">
       <v-form ref="form" enctype="multipart/form-data" @submit.prevent="updatePublication" v-model="valid">
-        <h3 class="mb-5" align="center">Modifier votre message</h3>
+        <h1 class="mb-5" align="center">Modifier votre message</h1>
         <div>
           <input type="file" ref="file" name="file" id="file" class="attachment" @change="selectFile"/>
           <label for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon>Ajouter une image</label>
