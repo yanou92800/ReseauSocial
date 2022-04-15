@@ -20,13 +20,11 @@
       <v-col md="4" sm="6" cols="8" class="mx-auto" v-if="$store.state.userId == user.infos.id">
         <v-row class="mx-auto" align="center" justify="center">
           <v-form ref="form" enctype="multipart/form-data" @submit.prevent="updateAvatar">
-            <v-card align="center" for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-card>
-            <div>
-              <input type="file" ref="file" name="file" id="file" class="file mt-5" @change="selectFile"/>
-            </div>
+            <label align="center" for="file"><v-card><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon> Changer d'avatar</v-card></label>
+            <input type="file" ref="file" name="file" id="file" class="file mt-5" @change="selectFile"/>
             <div>
               <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>
-              <img contain height="100" v-if="imgPreview" :src="imgPreview"/>
+              <img title="imgpreview" aria-label="Aperçu de l'image" contain height="100" v-if="imgPreview" :src="imgPreview"/>
             </div>
             <div v-if="imgPreview != ''" align="center">
               <v-btn align="center" color="red darken-2 white--text" type="submit" value="submit" dark>Confirmer</v-btn>

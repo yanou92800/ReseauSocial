@@ -11,6 +11,7 @@
           <v-text-field v-model="userUpdateInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
           <v-text-field v-model="userUpdateInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
           <v-text-field v-model="userUpdateInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
+          <v-text-field v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" label="Confirmer password" prepend-icon="mdi-lock" :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showConfirmPassword = !showConfirmPassword"/>
         </v-form>
       </v-col>
     </v-row>
@@ -30,6 +31,7 @@ export default {
     return {
       valid: false,
       showPassword: false,
+      showConfirmPassword: false,
       dialog: false,
       user: {
         infos: {},
@@ -39,6 +41,7 @@ export default {
         email: "",
         password: ""
       },
+      confirmPassword: "",
       usernameRules: [
         (v) =>
           (v && v.length >= 4) ||
@@ -79,7 +82,7 @@ export default {
   },
   methods: {
     updateProfile() {
-      if (this.$refs.form.validate()) {
+      if (this.$refs.form.validate() && this.confirmPassword == this.userUpdateInfo.password) {
       axios
         .put("http://localhost:5000/api/updateProfile/" + this.$route.params.id, this.userUpdateInfo, {
             headers: {
@@ -93,7 +96,6 @@ export default {
           });
           this.$store.state.username = this.userUpdateInfo.username;
           this.$store.state.email = this.userUpdateInfo.email;
-          this.$store.state.password = this.userUpdateInfo.password;
           this.$router.go();
         })
         .catch(() => {

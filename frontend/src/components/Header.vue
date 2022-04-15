@@ -36,7 +36,7 @@
     </v-tooltip>
     <v-tooltip v-if="isLogged">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn class="mx-2" @click="logout()" icon v-bind="attrs" v-on="on" aria-label="Se déconnecter">
+        <v-btn title="Déconnexion" aria-label="Se déconnecter" class="mx-2" @click="logout()" icon v-bind="attrs" v-on="on">
           <v-icon>mdi-logout</v-icon>
         </v-btn>
       </template>

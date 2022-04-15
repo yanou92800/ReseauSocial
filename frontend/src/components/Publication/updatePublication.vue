@@ -8,7 +8,7 @@
           <label for="file"><v-icon color="blue darken-2" hover>mdi-camera-plus</v-icon>Ajouter une image</label>
         </div>
         <div class="my-5">
-          <v-textarea filled v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
+          <v-textarea v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
         </div>
         <div class="space">
           <label v-if="imgPreview" for="preview">Aperçu de l'image:</label>

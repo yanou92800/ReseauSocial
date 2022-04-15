@@ -26,8 +26,8 @@
             <v-col>
               <v-tooltip top v-if="publication.userId == $store.state.userId">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn class="mr-5" v-bind="attrs" v-on="on" text small>
-                    <router-link title="Modification" aria-label="Modifier la publication" :to="`/updatePublication/${publication.id}`">
+                  <v-btn title="Modification" aria-label="Modifier la publication" class="mr-5" v-bind="attrs" v-on="on" text small>
+                    <router-link aria-label="Aller à la modification" :to="`/updatePublication/${publication.id}`">
                       <v-icon color="cyan darken-2" size="1.5rem">mdi-pen-plus</v-icon>
                     </router-link>
                   </v-btn>
@@ -36,7 +36,7 @@
               </v-tooltip>
               <v-tooltip top v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
+                  <v-btn title="Supprimer" aria-label="Supprimer" @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
                     <v-icon size="1.5rem">mdi-delete</v-icon>
                   </v-btn>
                 </template>
@@ -55,7 +55,7 @@
             <v-col>
               <v-tooltip top v-if="!isLiked">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" @click="addLike" aria-label="Aimer cette publication">
+                  <v-btn title="Like" aria-label="Aimer cette publication" icon v-bind="attrs" v-on="on" @click="addLike">
                     <v-icon size="1.5rem" color="yellow">mdi-thumb-up-outline</v-icon>
                   </v-btn>
                 </template>
@@ -69,7 +69,7 @@
               </v-tooltip>
               <v-tooltip top v-else-if="isLiked">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" @click="deleteLike" aria-label="Ne plus aimer cette publication">
+                  <v-btn title="Like" aria-label="Ne plus aimer" icon v-bind="attrs" v-on="on" @click="deleteLike">
                     <v-icon size="1.5rem" color="yellow">mdi-thumb-up</v-icon>
                   </v-btn>
                 </template>
@@ -94,7 +94,7 @@
             <v-card flat width="45vw">
               <div>
                 <v-form ref="form" v-model="valid" @submit.prevent="createComment" v-on:getAllComments="mounted()">
-                  <v-textarea outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
+                  <v-textarea label="Créer mon commentaire" outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
                   <div align="center">
                     <v-btn type="submit" small value="submit" color="red darken-2" dark :disabled="!valid">Poster</v-btn>
                   </div>
@@ -112,7 +112,7 @@
               <v-col>
                 <v-tooltip top v-if="comment.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn @click="deleteComment(comment)" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
+                    <v-btn aria-label="Supprimer commentaire" @click="deleteComment(comment)" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
                       <v-icon size="1.5rem">mdi-delete</v-icon>
                     </v-btn>
                   </template>

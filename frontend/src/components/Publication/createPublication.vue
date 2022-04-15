@@ -4,7 +4,7 @@
       <v-card-title>Nouvelle publication</v-card-title>
       <v-form ref="form" enctype="multipart/form-data" @submit.prevent="createPublication">
         <v-card-actions>
-          <v-textarea v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
+          <v-textarea filled color="#AD0000" v-model="content" label="Ma publication" type="text" :rules="contentRules"></v-textarea>
         </v-card-actions>
         <div>
           <input type="file" ref="file" name="file" id="file" class="file" @change="selectFile"/>

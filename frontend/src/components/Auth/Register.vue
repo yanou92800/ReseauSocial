@@ -10,6 +10,7 @@
           <v-text-field v-model="userInfo.username" label="Username" prepend-icon="mdi-account-circle" :rules="usernameRules"/>
           <v-text-field v-model="userInfo.email" label="Email" type="email" prepend-icon="mdi-account-circle" :rules="emailRules"/>
           <v-text-field v-model="userInfo.password" :type="showPassword ? 'text' : 'password'" label="Password" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showPassword = !showPassword"/>
+          <v-text-field v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" label="Confirmer password" prepend-icon="mdi-lock" :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" @click:append="showConfirmPassword = !showConfirmPassword"/>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -29,11 +30,13 @@ export default {
     return {
       valid: false,
       showPassword: false,
+      showConfirmPassword: false,
       userInfo: {
         username: "",
         email: "",
         password: ""
       },
+      confirmPassword: "",
       usernameRules: [
         (v) =>
           (v && v.length >= 4) ||
@@ -59,7 +62,7 @@ export default {
   },
   methods: {
     submitForm() {
-      if (this.$refs.form.validate()) {
+      if (this.$refs.form.validate() && this.confirmPassword == this.userInfo.password) {
         axios
           .post("http://localhost:5000/api/signup", this.userInfo)
           .then((response) => {
