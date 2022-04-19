@@ -1,6 +1,9 @@
 <template>
-  <v-form ref="form" @submit.prevent="updateProfile">
-    <v-row style="justify-content: center" v-if="user.infos.id == $store.state.userId">
+  <v-form ref="form" @submit.prevent="updateProfile" v-if="user.infos.id == $store.state.userId">
+    <v-row style="justify-content: center" class="mt-5">
+      <h1>Modifier son profil</h1>
+    </v-row>
+    <v-row style="justify-content: center">
       <v-col md="3" class="mt-10">
         <v-card><v-card-text><strong>Username:</strong> {{ username }}</v-card-text></v-card>
         <v-card><v-card-text><strong>Email:</strong> {{ email }}</v-card-text></v-card>

@@ -12,6 +12,8 @@ const sqlGetOnePublication = (id) => {
     return `SELECT publications.*, users.username, users.avatar, users.isAdmin FROM publications JOIN users ON publications.userId = users.id WHERE publications.id = ${id}`
   };
 
+exports.getOnePublicationQuery = sqlGetOnePublication;
+
 const sqlDeletePublication = (id) => {
     return `DELETE FROM publications WHERE id = "${id}"`
 };

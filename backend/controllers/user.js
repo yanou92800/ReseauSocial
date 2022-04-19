@@ -32,6 +32,8 @@ const sqlGetUserInfos = (id) => {
   return `SELECT * FROM users WHERE id = '${id}'`
 };
 
+exports.getUserInfosQuery = sqlGetUserInfos;
+
 const sqlGetUsername = (username) => {
   return `SELECT * FROM users WHERE username = '${username}'`
 };
@@ -111,7 +113,7 @@ exports.login = (req, res, next) => {
                 email: req.body.email,
                 password: result[0].password,
                 token: jwt.sign(
-                  {userToken: result[0].id},
+                  {userId: result[0].id},
                   process.env.TOKEN,
                   {expiresIn: '24h'},
                 ),

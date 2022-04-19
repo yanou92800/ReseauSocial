@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <v-col class="my-10">
+    <v-row style="justify-content: center" class="mt-5">
+      <h1>Profil de l'utilisateur</h1>
+    </v-row>
+    <v-col>
       <v-col md="4" sm="6" cols="8" class="mx-auto">
         <v-row class="mx-auto" align="center" justify="center">
           <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" @click="addAdmin">Nommer modérateur</v-btn>
