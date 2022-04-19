@@ -76,5 +76,5 @@ CREATE TABLE `publications` (
 
 Frontend
 
-  npm install
-  npm run serve
+  npm i pour installer les dépendances
+  npm run serve pour lancer le Frontend
