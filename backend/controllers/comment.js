@@ -8,6 +8,8 @@ const sqlGetOneComment = (id) => {
     return `SELECT comments.*, users.username FROM comments JOIN users ON comments.userId = users.id  WHERE comments.id = ${id}`
   };
 
+exports.getOneCommentQuery = sqlGetOneComment;
+
 const sqlUpdateComment = (content, id) => {
     return `UPDATE comments SET content = "${content}" WHERE id = "${id}"` // tester la sous requete
 };
@@ -55,15 +57,7 @@ exports.getOneComment = (req, res, next) => {
         if (result) {
           // console.log(result[0].username)
           }
-        res.status(200).json({
-          message: 'Acces au commentaire',
-          id: result[0].id,
-          userId: result[0].userId,
-          username: result[0].username,
-          content: result[0].content,
-          publicationId: result[0].publicationId,
-          createdAt: result[0].createdAt
-        })
+        res.status(200).json(result)
       }
     )
   };

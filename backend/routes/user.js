@@ -10,11 +10,11 @@ router.post('/signup', password, userCtrl.signup);
 router.post('/login', userCtrl.login);
 router.get('/infos/:id', auth.token, userCtrl.getUserInfos);
 router.get('/infos/:id', auth.token, userCtrl.getUsername);
-router.get('/allUsers', userCtrl.getAllUsers);
-router.put('/addAdmin/:id', auth.admin, userCtrl.addAdmin);
-router.put('/removeAdmin/:id', auth.token, userCtrl.removeAdmin);
-router.put('/updateProfile/:id', auth.params, password, userCtrl.updateProfile);
-router.put('/updateAvatar/:id', auth.params, multer, userCtrl.updateAvatar);
-router.delete('/deleteProfile/:id', auth.token, userCtrl.deleteProfile);
+router.get('/allUsers', auth.token, userCtrl.getAllUsers);
+router.put('/addAdmin/:id', auth.token, auth.isMemberOrAdminUser, userCtrl.addAdmin);
+router.put('/removeAdmin/:id', auth.token, auth.isMemberOrAdminUser, userCtrl.removeAdmin);
+router.put('/updateProfile/:id', auth.token, auth.isMemberOrAdminUser, password, userCtrl.updateProfile);
+router.put('/updateAvatar/:id', auth.token, auth.isMemberOrAdminUser, multer, userCtrl.updateAvatar);
+router.delete('/deleteProfile/:id', auth.token, auth.isMemberOrAdminUser, userCtrl.deleteProfile);
 
 module.exports = router;
