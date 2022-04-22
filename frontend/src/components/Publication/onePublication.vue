@@ -104,7 +104,7 @@
           <v-col>
             <v-tooltip top v-if="comment.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn aria-label="Supprimer commentaire" @click="deleteComment(comment)" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
+                <v-btn aria-label="Supprimer commentaire" @click="deleteComment(comment)" v-bind="attrs" v-on="on" text color="red darken-4" small>
                   <v-icon size="1.5rem">mdi-delete</v-icon>
                 </v-btn>
               </template>

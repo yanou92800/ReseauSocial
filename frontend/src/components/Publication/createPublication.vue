@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="pa-5 mt-7">
+    <v-card class="pa-5 mt-7" style="border: thick double red;">
       <v-card-title>Nouvelle publication</v-card-title>
       <v-form ref="form" enctype="multipart/form-data" @submit.prevent="createPublication">
         <v-card-actions>

@@ -3,7 +3,7 @@
     <v-row align="center" justify="center">
 			<v-btn class="red accent-2" elevation="2" plain small to="/">Connexion</v-btn>
 		</v-row>
-    <v-card width="400" class="mx-auto mt-5 red lighten-5">
+    <v-card width="400" class="mx-auto mt-5 red">
       <v-card-title>S'inscrire</v-card-title>
       <v-card-text>
         <v-form v-model="valid" ref="form">

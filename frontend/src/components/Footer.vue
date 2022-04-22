@@ -4,7 +4,7 @@
       class="text-center"
       cols="12"
     >
-      {{ new Date().getFullYear() }} — <strong>Groupomania</strong>
+      {{ new Date().getFullYear() }} — <strong>ASM Forum</strong>
     </v-col>
   </v-footer>
 </template>

@@ -1,7 +1,7 @@
 <template>
 	<v-app>
 		<Header />
-		<v-main>
+		<v-main style="border: 40px ridge red;">
 			<router-view />
 		</v-main>
 		<SnackBar />
@@ -26,9 +26,7 @@ export default {
 <style>
 
 #app {
-  background: #1a2a6c;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: white;
 	width: 100vw;
 }
 
