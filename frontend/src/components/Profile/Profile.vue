@@ -89,7 +89,6 @@ export default {
           Authorization: `Bearer ${$store.state.token}`,
         },
       })
-      console.log(this.$route.params.id)
       .then((response) => {
         //console.log(response);
         this.user = response.data;
@@ -107,7 +106,6 @@ export default {
       console.log("localStorage" , response);
       const fd = new FormData();
       fd.append("inputFile", this.file);
-
       axios
         .put(
           "http://localhost:5000/api/updateAvatar/" +
@@ -119,7 +117,6 @@ export default {
             },
           }
         )
-        console.log(this.$route.params.id)
         .then(() => {
           this.$store.dispatch("setSnackbar", {
             text: "Votre avatar est modifié ",
@@ -214,24 +211,19 @@ export default {
   display: inline-block;
   cursor: pointer;
 }
-
 .avatar:focus + label,
 .avatar + label:hover {
   background-color: #effbff;
 }
-
 .title {
     font-size: 2rem !important;
 }
-
 .admin {
 	color: #26172B;
   font-size: 2rem !important;
 }
-
 .modo {
   color: #001438;
   font-size: 2rem !important;
 }
-
 </style>
