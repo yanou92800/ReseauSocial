@@ -123,20 +123,18 @@ exports.deletePublication = (req, res, next) => {
 
 exports.getAllPublications = (req, res, next) => {
   
-    const getAllPublications = sqlGetAllPublications();
+  const getAllPublications = sqlGetAllPublications();
   
-    //console.log(getAllPublications)
-    
-    db.query(
-      getAllPublications,
-      function(error, result) {
-        if (error) throw error;
-        //console.log(error);
-        if (result) {
-          //console.log(result)
-          }
-        res.status(200).json(result)
-      }
-    )
-  };
+  db.query(
+    getAllPublications,
+    function(error, result) {
+      if (error) throw error;
+      //console.log(error);
+      if (result) {
+        //console.log(result)
+        }
+      res.status(200).json(result)
+    }
+  )
+};
   

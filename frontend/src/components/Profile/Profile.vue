@@ -89,6 +89,7 @@ export default {
           Authorization: `Bearer ${$store.state.token}`,
         },
       })
+      console.log(this.$route.params.id)
       .then((response) => {
         //console.log(response);
         this.user = response.data;
@@ -118,6 +119,7 @@ export default {
             },
           }
         )
+        console.log(this.$route.params.id)
         .then(() => {
           this.$store.dispatch("setSnackbar", {
             text: "Votre avatar est modifié ",

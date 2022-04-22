@@ -113,3 +113,20 @@ exports.token = (req, res, next) => {
     });
   }
 };
+
+// exports.admin = (req, res, next) => {
+//   try {
+//     const token = req.headers.authorization.split(" ")[1]; // extraction du token du header avec fonction split pour récupérer tout après l'espace dans le header
+//     const decodedToken = jwt.verify(token, `${process.env.TOKEN}`); // verify pour décoder le token
+//     if (decodedToken.isAdmin !== 1) { //Sachant que je l'ai rajouté dans mon token
+//       return next();
+//     }
+//     else {
+//       throw "Ce n'est pas un admin"
+//     }
+//   } catch {
+//     res.status(401).json({
+//       error: new Error("Invalid request!"), // si différent erreur
+//     });
+//   }
+// };

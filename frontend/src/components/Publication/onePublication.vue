@@ -1,129 +1,119 @@
 <template>
-  <v-container class="d-flex flex-column mx-auto my-10" justify-content="center" align="center">
-    <v-row>
-      <v-col cols="12">
-        <v-card class="mx-auto" align="center" min-width="40vw" max-width="70vw">
-          <v-list-item class="red" align="start" hover>
-            <router-link title="Profil" aria-label="Aller à son profil" :to="`/Profile/${publication.userId}`">
+  <v-col xs="10" sm="10" md="8" lg="8" xl="8" class="mx-auto" align="center">
+    <v-card class="mt-10">
+      <v-list-item class="red" align="start" hover>
+        <router-link title="Profil" aria-label="Aller à son profil" :to="`/Profile/${publication.userId}`">
+          <v-list-item-avatar outlined color="grey darken-3">
+            <v-img :src="publication.avatar" alt="photo de profil"></v-img>
+          </v-list-item-avatar>
+        </router-link>
+        <v-list-item-content>
+          <v-list-item-title class="admin font-weight-medium" v-if="publication.isAdmin == 1">ADMIN</v-list-item-title>
+          <v-list-item-title class="modo font-weight-medium" v-if="publication.isAdmin == 2">MODERATEUR</v-list-item-title>
+          <v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
+          <v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-row>
+        <v-col>
+          <v-card-text class="text-start">{{ publication.content }}</v-card-text>
+          <v-img contain max-height="300" :src="publication.attachment"></v-img>
+        </v-col>
+      </v-row>
+      <v-card-actions>
+        <v-col>
+          <v-tooltip top v-if="publication.userId == $store.state.userId">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn title="Modification" aria-label="Modifier la publication" class="mr-5" v-bind="attrs" v-on="on" text small>
+                <router-link aria-label="Aller à la modification" :to="`/updatePublication/${publication.id}`">
+                  <v-icon color="cyan darken-2" size="1.5rem">mdi-pen-plus</v-icon>
+                </router-link>
+              </v-btn>
+            </template>
+            <i>Modifier</i>
+          </v-tooltip>
+          <v-tooltip top v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn title="Supprimer" aria-label="Supprimer" @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
+                <v-icon size="1.5rem">mdi-delete</v-icon>
+              </v-btn>
+            </template>
+            <i class="mt-5">Supprimer</i>
+          </v-tooltip>
+            <v-dialog v-model="dialog" max-width="500">
+              <v-card>
+                <v-card-title class="justify-center">Supprimer la publication</v-card-title>
+                <v-card-actions class="justify-center" @click="dialog = false">
+                  <v-btn color="red darken-1" text>Annuler</v-btn>
+                  <v-btn color="red darken-3" text @click="deletePublication">Confirmer</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+        </v-col>
+        <v-col>
+          <v-tooltip top v-if="!isLiked">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn title="Like" aria-label="Aimer cette publication" icon v-bind="attrs" v-on="on" @click="addLike">
+                <v-icon size="1.5rem" color="yellow">mdi-thumb-up-outline</v-icon>
+              </v-btn>
+            </template>
+            <div :key="index" v-for="(like, index) in Likes" class="card">
               <v-list-item-avatar outlined color="grey darken-3">
-                <v-img :src="publication.avatar" alt="photo de profil"></v-img>
+                <v-img :src="like.avatar" alt="photo de profil"></v-img>
               </v-list-item-avatar>
-            </router-link>
-            <v-list-item-content>
-              <v-list-item-title class="admin font-weight-medium" v-if="publication.isAdmin == 1">ADMIN</v-list-item-title>
-              <v-list-item-title class="modo font-weight-medium" v-if="publication.isAdmin == 2">MODERATEUR</v-list-item-title>
-              <v-list-item-title class="font-weight-medium">{{ publication.username }}</v-list-item-title>
-              <v-list-item-title class="text-caption">{{ publication.createdAt | formatDate }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-row>
-            <v-col>
-              <v-card-text class="text-start">{{ publication.content }}</v-card-text>
-              <v-img contain max-height="300" :src="publication.attachment"></v-img>
-            </v-col>
-          </v-row>
-          <v-card-actions align="center">
-            <v-col>
-              <v-tooltip top v-if="publication.userId == $store.state.userId">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn title="Modification" aria-label="Modifier la publication" class="mr-5" v-bind="attrs" v-on="on" text small>
-                    <router-link aria-label="Aller à la modification" :to="`/updatePublication/${publication.id}`">
-                      <v-icon color="cyan darken-2" size="1.5rem">mdi-pen-plus</v-icon>
-                    </router-link>
-                  </v-btn>
-                </template>
-                <i>Modifier</i>
-              </v-tooltip>
-              <v-tooltip top v-if="publication.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn title="Supprimer" aria-label="Supprimer" @click.stop="dialog = true" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
-                    <v-icon size="1.5rem">mdi-delete</v-icon>
-                  </v-btn>
-                </template>
-                <i class="mt-5">Supprimer</i>
-              </v-tooltip>
-                <v-dialog v-model="dialog" max-width="500">
-                  <v-card>
-                    <v-card-title class="justify-center">Supprimer la publication</v-card-title>
-                    <v-card-actions class="justify-center" @click="dialog = false">
-                      <v-btn color="red darken-1" text>Annuler</v-btn>
-                      <v-btn color="red darken-3" text @click="deletePublication">Confirmer</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-            </v-col>
-            <v-col>
-              <v-tooltip top v-if="!isLiked">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn title="Like" aria-label="Aimer cette publication" icon v-bind="attrs" v-on="on" @click="addLike">
-                    <v-icon size="1.5rem" color="yellow">mdi-thumb-up-outline</v-icon>
-                  </v-btn>
-                </template>
-                <div :key="index" v-for="(like, index) in Likes" class="card">
-                  <v-list-item-avatar outlined color="grey darken-3">
-                    <v-img :src="like.avatar" alt="photo de profil"></v-img>
-                  </v-list-item-avatar>
-                  <strong>{{ like.username }}</strong>
-                </div>
-                <i>J'aime</i>
-              </v-tooltip>
-              <v-tooltip top v-else-if="isLiked">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn title="Like" aria-label="Ne plus aimer" icon v-bind="attrs" v-on="on" @click="deleteLike">
-                    <v-icon size="1.5rem" color="yellow">mdi-thumb-up</v-icon>
-                  </v-btn>
-                </template>
-                <div :key="index" v-for="(like, index) in Likes" class="card">
-                  <v-list-item-avatar outlined color="blue darken-3">
-                    <v-img :src="like.avatar" alt="photo de profil"></v-img>
-                  </v-list-item-avatar>
-                  <strong>{{ like.username }}</strong>
-                </div>
-                <i>Je n'aime plus</i>
-              </v-tooltip>
-              <span>{{ Likes.length }}</span>
-            </v-col>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-card class="mx-auto" align="center">
-          <v-container>
-            <v-card flat width="45vw">
-              <div>
-                <v-form ref="form" v-model="valid" @submit.prevent="createComment" v-on:getAllComments="mounted()">
-                  <v-textarea label="Créer mon commentaire" outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
-                  <div align="center">
-                    <v-btn type="submit" small value="submit" color="red darken-2" dark :disabled="!valid">Poster</v-btn>
-                  </div>
-                </v-form>
+              <strong>{{ like.username }}</strong>
+            </div>
+            <i>J'aime</i>
+          </v-tooltip>
+          <v-tooltip top v-else-if="isLiked">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn title="Like" aria-label="Ne plus aimer" icon v-bind="attrs" v-on="on" @click="deleteLike">
+                <v-icon size="1.5rem" color="yellow">mdi-thumb-up</v-icon>
+              </v-btn>
+            </template>
+            <div :key="index" v-for="(like, index) in Likes" class="card">
+              <v-list-item-avatar outlined color="blue darken-3">
+                <v-img :src="like.avatar" alt="photo de profil"></v-img>
+              </v-list-item-avatar>
+              <strong>{{ like.username }}</strong>
+            </div>
+            <i>Je n'aime plus</i>
+          </v-tooltip>
+          <span>{{ Likes.length }}</span>
+        </v-col>
+      </v-card-actions>
+    </v-card>
+    <v-card class="mt-10">
+      <v-container>
+        <v-card flat width="45vw">
+          <div>
+            <v-form ref="form" v-model="valid" @submit.prevent="createComment" v-on:getAllComments="mounted()">
+              <v-textarea label="Créer mon commentaire" outlined v-model="comment" type="text" placeholder="Votre commentaire..." required :rules="commentRules"></v-textarea>
+              <div align="center">
+                <v-btn type="submit" small value="submit" color="red darken-2" dark :disabled="!valid">Poster</v-btn>
               </div>
-            </v-card>
-          </v-container>
+            </v-form>
+          </div>
         </v-card>
-      </v-col>
-      <v-col cols="12">
-        <v-card :key="index" v-for="(comment, index) in commentList" class="px-5 py-5 my-5" width="60vw">
-          <strong>Commenté par {{ comment.username }} le {{ comment.createdAt | formatDate }} </strong>
-          <v-card-text class="text-start">{{ comment.content }}</v-card-text>
-          <v-card-actions align="center">
-              <v-col>
-                <v-tooltip top v-if="comment.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn aria-label="Supprimer commentaire" @click="deleteComment(comment)" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
-                      <v-icon size="1.5rem">mdi-delete</v-icon>
-                    </v-btn>
-                  </template>
-                  <i class="mt-5">Supprimer</i>
-                </v-tooltip>
-              </v-col>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-container>
+    </v-card>
+    <v-card :key="index" v-for="(comment, index) in commentList" class="px-5 py-5 my-5" align="start">
+      <strong>Commenté par {{ comment.username }} le {{ comment.createdAt | formatDate }} </strong>
+      <v-card-text class="text-start">{{ comment.content }}</v-card-text>
+      <v-card-actions align="start">
+          <v-col>
+            <v-tooltip top v-if="comment.userId == $store.state.userId || $store.state.isAdmin == 1 || $store.state.isAdmin == 2">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn aria-label="Supprimer commentaire" @click="deleteComment(comment)" v-bind="attrs" v-on="on" text color="deep-orange darken-3" small>
+                  <v-icon size="1.5rem">mdi-delete</v-icon>
+                </v-btn>
+              </template>
+              <i class="mt-5">Supprimer</i>
+            </v-tooltip>
+          </v-col>
+      </v-card-actions>
+    </v-card>
+  </v-col>
 </template>
 
 <script>
