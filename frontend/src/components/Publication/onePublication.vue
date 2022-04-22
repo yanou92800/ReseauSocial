@@ -408,10 +408,6 @@ a {
   text-decoration: none;
 }
 
-.container {
-  padding: 5vw 0vw 2vw 0vw;
-}
-
 .admin {
   color: #26172B;
 }

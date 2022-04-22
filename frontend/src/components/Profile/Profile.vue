@@ -1,9 +1,9 @@
 <template>
   <v-app>
-    <v-row style="justify-content: center" class="mt-5">
-      <h1>Profil de l'utilisateur</h1>
-    </v-row>
-    <v-col>
+    <v-col xs="10" sm="10" md="8" lg="8" xl="6" class="mx-auto my-10" align="center" justify="center" style="border: thick double red;">
+      <v-row style="justify-content: center" class="mt-5">
+        <h1>Profil de l'utilisateur</h1>
+      </v-row>
       <v-col md="4" sm="6" cols="8" class="mx-auto">
         <v-row class="mx-auto" align="center" justify="center">
           <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" @click="addAdmin">Nommer modérateur</v-btn>
@@ -216,14 +216,14 @@ export default {
   background-color: #effbff;
 }
 .title {
-    font-size: 2rem !important;
+    font-size: 3vw !important;
 }
 .admin {
 	color: #26172B;
-  font-size: 2rem !important;
+  font-size: 2.4vw !important;
 }
 .modo {
   color: #001438;
-  font-size: 2rem !important;
+  font-size: 3vw !important;
 }
 </style>

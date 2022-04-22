@@ -1,7 +1,7 @@
 <template>
 	<v-app>
 		<Header />
-		<v-main style="border: 40px ridge red;">
+		<v-main style="border-left: 20px ridge red;border-right: 20px ridge red;">
 			<router-view />
 		</v-main>
 		<SnackBar />
@@ -27,7 +27,6 @@ export default {
 
 #app {
   background: white;
-	width: 100vw;
 }
 
 </style>

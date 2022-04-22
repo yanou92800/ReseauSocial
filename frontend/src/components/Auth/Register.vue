@@ -1,9 +1,9 @@
 <template>
-  <v-container>
+  <v-container class="mt-5">
     <v-row align="center" justify="center">
-			<v-btn class="red accent-2" elevation="2" plain small to="/">Connexion</v-btn>
+			<v-btn class="red accent-2" elevation="24" plain small to="/">Connexion</v-btn>
 		</v-row>
-    <v-card width="400" class="mx-auto mt-5 red">
+    <v-card width="400" class="mx-auto mt-5" style="border: thick double red;">
       <v-card-title>S'inscrire</v-card-title>
       <v-card-text>
         <v-form v-model="valid" ref="form">

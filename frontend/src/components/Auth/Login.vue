@@ -1,5 +1,5 @@
 <template>
-  <v-card width="400" class="mx-auto mt-5">
+  <v-card width="400" class="mx-auto my-5" style="border: thick double red;">
     <v-card-title>Connexion</v-card-title>
     <v-card-text>
       <v-form v-model="valid" ref="form">
