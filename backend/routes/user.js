@@ -9,7 +9,7 @@ const auth = require('../middleware/auth');
 router.post('/signup', password, userCtrl.signup);
 router.post('/login', userCtrl.login);
 router.get('/infos/:id', auth.token, userCtrl.getUserInfos);
-router.get('/infos/:id', auth.token, userCtrl.getUsername);
+router.get('/infos', auth.token, userCtrl.getUsername);
 router.get('/allUsers', auth.token, userCtrl.getAllUsers);
 router.put('/addAdmin/:id', auth.token, auth.isMemberOrAdminUser, userCtrl.addAdmin);
 router.put('/removeAdmin/:id', auth.token, auth.isMemberOrAdminUser, userCtrl.removeAdmin);

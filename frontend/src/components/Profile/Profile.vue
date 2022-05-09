@@ -7,7 +7,7 @@
       <v-col md="4" sm="6" cols="8" class="mx-auto">
         <v-row class="mx-auto" align="center" justify="center">
           <v-btn v-if="$store.state.isAdmin == 1 && $store.state.userId != user.infos.id && user.infos.isAdmin != 2" @click="addAdmin">Nommer modérateur</v-btn>
-          <v-btn v-if="$store.state.userId == user.infos.id && $store.state.isAdmin == 2 || $store.state.isAdmin == 1 && user.infos.isAdmin == 2" @click="removeAdmin">Enlever modérateur</v-btn>
+          <v-btn v-if="$store.state.userId == user.infos.id && user.infos.isAdmin == 2 || $store.state.isAdmin == 1 && user.infos.isAdmin == 2" @click="removeAdmin">Enlever modérateur</v-btn>
         </v-row>
       </v-col>
       <v-col md="4" sm="6" cols="8" class="mx-auto">
@@ -84,7 +84,7 @@ export default {
   },
   mounted() {
     axios
-      .get("http://localhost:5000/api/infos/" + this.$route.params.id, {
+      .get("http://localhost:4000/api/infos/" + this.$route.params.id, {
         headers: {
           Authorization: `Bearer ${$store.state.token}`,
         },
@@ -92,6 +92,9 @@ export default {
       .then((response) => {
         //console.log(response);
         this.user = response.data;
+        if (this.user.infos.id === $store.state.userId) {
+            this.$store.state.isAdmin = this.user.infos.isAdmin
+          }
       })
       .catch((error) => {
         console.log(error);
@@ -108,7 +111,7 @@ export default {
       fd.append("inputFile", this.file);
       axios
         .put(
-          "http://localhost:5000/api/updateAvatar/" +
+          "http://localhost:4000/api/updateAvatar/" +
           this.$route.params.id,
           fd, 
           {
@@ -135,7 +138,7 @@ export default {
     },
     addAdmin() {
       axios
-        .put("http://localhost:5000/api/addAdmin/" + this.$route.params.id, {}, {
+        .put("http://localhost:4000/api/addAdmin/" + this.$route.params.id, {}, {
           headers: {
             Authorization: `Bearer ${$store.state.token}`
           }
@@ -152,7 +155,7 @@ export default {
     },
     removeAdmin() {
       axios
-        .put("http://localhost:5000/api/removeAdmin/" + this.$route.params.id, {}, {
+        .put("http://localhost:4000/api/removeAdmin/" + this.$route.params.id, {}, {
           headers: {
             Authorization: `Bearer ${$store.state.token}`
           }
@@ -174,7 +177,7 @@ export default {
       this.dialog = false;
       axios
         .delete(
-          "http://localhost:5000/api/deleteProfile/" + this.$route.params.id,
+          "http://localhost:4000/api/deleteProfile/" + this.$route.params.id,
           {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,

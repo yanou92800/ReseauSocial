@@ -1,4 +1,4 @@
-// Donne accès à l'application dans le localhost 5000
+// Donne accès à l'application dans le localhost 4000
 require('dotenv').config();
 const http = require('http'); // importer le package pour récupère l'en-tête
 const app = require('./app'); // importer l'application
@@ -14,7 +14,7 @@ const normalizePort = val => { // renvoie un port valide
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || '5000'); //permet de se servir de tous les ports
+const port = normalizePort(process.env.PORT || '4000'); //permet de se servir de tous les ports
 app.set('port', port);
 
 const errorHandler = error => { // recherche les différentes erreurs et les gère

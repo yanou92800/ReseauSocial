@@ -1,5 +1,15 @@
 <template>
 	<v-app>
+		<v-tooltip top>
+			<template v-slot:activator="{ on, attrs }">
+				<v-form v-model="valid" ref="form" @submit.prevent="getUsername">
+					<v-row class="mt-5 mr-5">
+						<v-icon class="mb-5 mr-5" @click="getUsername" icon v-bind="attrs" v-on="on" aria-label="Voir le profil de cet utlisateur">mdi-magnify</v-icon>
+						<v-text-field v-model="getUsername" label=""/>
+					</v-row>
+				</v-form>
+			</template>
+		</v-tooltip>
 		<v-col xs="10" sm="10" md="8" lg="8" xl="8" class="mx-auto">
 			<createPublication v-on:getAllPublications="getAllPublications($event)"></createPublication>
 			<v-card v-for="(publication, index) in publicationList" :key="index" flat hover :to="{ name: 'onePublication', params: { id: publication.id } }">
@@ -34,6 +44,7 @@ import $store from "@/store/index";
 import dayjs from "dayjs";
 import createPublication from "./createPublication"
 import { PublicationService } from "./publication.service"
+import axios from "axios"
 
 export default {
 	name: "allPublications",
@@ -42,7 +53,6 @@ export default {
 	},
 	data() {
 		return {
-			user: {},
 			publicationList: [],
 		};
 	},
@@ -51,7 +61,6 @@ export default {
 			.then((publication) => {
 				//console.log("Tableau" , publication)
 				this.publicationList = publication;
-				this.$store.state.avatar = this.user.infos.avatar;
 			})
 			.catch((error) => {
 				console.log(error);
@@ -69,6 +78,21 @@ export default {
 			});
 		}
 	},
+		getUsername() {
+			axios
+			.get("httplocalhost:4000/api/infos", {
+				headers: {
+					Authorization: `Bearer ${$store.state.token}`,
+				},
+			})
+			.then((response) => {
+			console.log(response);
+				this.user = response.data;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		},
 	filters: {
 		formatDate(value) {
 			if (value) {

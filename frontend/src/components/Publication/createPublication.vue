@@ -54,7 +54,7 @@ export default {
 
       if (this.$refs.form.validate()) {
         axios
-          .post(`http://localhost:5000/api/createPublication`, fd, {
+          .post(`http://localhost:4000/api/createPublication`, fd, {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
             },

@@ -1,6 +1,6 @@
 <template>
 	<v-container align="center" class="mx-auto mt-5">
-		<h1>New project</h1>
+		<h1>ASM Forum</h1>
 		<v-img class="mb-5" contain height="300" src="../assets/ASM.jpg"></v-img>
 		<v-row align="center" justify="center">
 			<v-btn class="red accent-2" elevation="24" plain small to="/Register">Inscription</v-btn>

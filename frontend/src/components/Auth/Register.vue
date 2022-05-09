@@ -64,7 +64,7 @@ export default {
     submitForm() {
       if (this.$refs.form.validate() && this.confirmPassword == this.userInfo.password) {
         axios
-          .post("http://localhost:5000/api/signup", this.userInfo)
+          .post("http://localhost:4000/api/signup", this.userInfo)
           .then((response) => {
             console.log('Register OK! ', response);
             this.$store.dispatch("setSnackbar", {

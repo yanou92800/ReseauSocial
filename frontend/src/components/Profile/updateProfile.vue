@@ -70,7 +70,7 @@ export default {
   },
   mounted() {
     axios
-      .get("http://localhost:5000/api/infos/" + this.$route.params.id, {
+      .get("http://localhost:4000/api/infos/" + this.$route.params.id, {
         headers: {
           Authorization: `Bearer ${$store.state.token}`,
         },
@@ -87,7 +87,7 @@ export default {
     updateProfile() {
       if (this.$refs.form.validate() && this.confirmPassword == this.userUpdateInfo.password) {
       axios
-        .put("http://localhost:5000/api/updateProfile/" + this.$route.params.id, this.userUpdateInfo, {
+        .put("http://localhost:4000/api/updateProfile/" + this.$route.params.id, this.userUpdateInfo, {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
             },
@@ -99,7 +99,7 @@ export default {
           });
           this.$store.state.username = this.userUpdateInfo.username;
           this.$store.state.email = this.userUpdateInfo.email;
-          this.$router.go();
+          this.$router.push(`/updateProfile/${$store.state.userId}`);
         })
         .catch(() => {
             this.$store.dispatch("setSnackbar", {

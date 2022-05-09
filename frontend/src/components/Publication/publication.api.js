@@ -3,7 +3,7 @@ import axios from 'axios'
 const PublicationApi = {
   getOnePublication(id, token) {
     return axios
-    .get("http://localhost:5000/api/onePublication/" + id, {
+    .get("http://localhost:4000/api/onePublication/" + id, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -11,7 +11,7 @@ const PublicationApi = {
   },
   getAllPublications(token) {
     return axios
-    .get("http://localhost:5000/api/allPublications", {
+    .get("http://localhost:4000/api/allPublications", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -19,7 +19,7 @@ const PublicationApi = {
   },
   getAllComments(id, token) {
     return axios
-    .get("http://localhost:5000/api/onePublication/" + id + "/allComments", {
+    .get("http://localhost:4000/api/onePublication/" + id + "/allComments", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

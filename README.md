@@ -8,7 +8,7 @@ npm i pour installer les dépendances
 
 Créer un fichier .env dans le dossier du backend en ajoutant vos informations de connexion à la base de données :
 
-PORT=5000
+PORT=4000
 DB_HOST=localhost
 DB_USER= root
 DB_PASSWORD= Votre password

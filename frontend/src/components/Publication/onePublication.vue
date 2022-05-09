@@ -172,7 +172,7 @@ export default {
       this.dialog = false;
       axios
         .delete(
-          "http://localhost:5000/api/deletePublication/" + this.$route.params.id,
+          "http://localhost:4000/api/deletePublication/" + this.$route.params.id,
           {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
@@ -200,7 +200,7 @@ export default {
     deleteComment(comment) {
       axios
         .delete(
-          `http://localhost:5000/api/deleteComment/${comment.id}`,
+          `http://localhost:4000/api/deleteComment/${comment.id}`,
           {
             headers: {
               Authorization: `Bearer ${$store.state.token}`,
@@ -244,7 +244,7 @@ export default {
         if(id) {
         axios
           .delete(
-            "http://localhost:5000/api/deleteLike/" +
+            "http://localhost:4000/api/deleteLike/" +
             id,
             {
               headers: {
@@ -280,7 +280,7 @@ export default {
       if (this.$refs.form.validate()) {
         axios
           .post(
-            "http://localhost:5000/api/onePublication/" +
+            "http://localhost:4000/api/onePublication/" +
               this.$route.params.id +
               "/createComment",
             { content: this.comment,
@@ -320,7 +320,7 @@ export default {
     getLikes() {
       axios
         .get(
-          "http://localhost:5000/api/onePublication/" +
+          "http://localhost:4000/api/onePublication/" +
             +this.$route.params.id +
             "/getAllLikes",
           {
@@ -354,7 +354,7 @@ export default {
         };
         axios
           .post(
-            "http://localhost:5000/api/onePublication/" +
+            "http://localhost:4000/api/onePublication/" +
               +this.$route.params.id +
               "/addLike",
             data,

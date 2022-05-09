@@ -73,7 +73,7 @@ export default {
       if (this.$refs.form.validate()) {
         axios
           .put(
-            "http://localhost:5000/api/updatePublication/" +
+            "http://localhost:/api/updatePublication/" +
             this.$route.params.id,
             fd,
             {

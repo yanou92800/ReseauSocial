@@ -32,7 +32,7 @@ export default {
   methods: {
     login() {
       axios
-        .post("http://localhost:5000/api/login", this.userInfo)
+        .post("http://localhost:4000/api/login", this.userInfo)
         .then((response) => {
           console.log("Login OK! ", response);
           this.$store.dispatch("setToken", response.data.token);
